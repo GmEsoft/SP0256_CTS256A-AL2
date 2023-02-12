@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SP0256", "SP0256\SP0256.vcproj", "{486DA70C-C9FE-4A06-A40E-A685833AC40F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTS256A-AL2", "CTS256A-AL2\CTS256A-AL2.vcproj", "{1E1CE4C7-A024-4278-A3B1-362FE36484C0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{486DA70C-C9FE-4A06-A40E-A685833AC40F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{486DA70C-C9FE-4A06-A40E-A685833AC40F}.Debug|Win32.Build.0 = Debug|Win32
+		{486DA70C-C9FE-4A06-A40E-A685833AC40F}.Release|Win32.ActiveCfg = Release|Win32
+		{486DA70C-C9FE-4A06-A40E-A685833AC40F}.Release|Win32.Build.0 = Release|Win32
+		{1E1CE4C7-A024-4278-A3B1-362FE36484C0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1E1CE4C7-A024-4278-A3B1-362FE36484C0}.Debug|Win32.Build.0 = Debug|Win32
+		{1E1CE4C7-A024-4278-A3B1-362FE36484C0}.Release|Win32.ActiveCfg = Release|Win32
+		{1E1CE4C7-A024-4278-A3B1-362FE36484C0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
