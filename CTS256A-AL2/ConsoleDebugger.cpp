@@ -11,7 +11,7 @@ static ConsoleDebugger *consoleDebugger = 0;
 static void sigbreakhandler(int s)
 {
 	if ( consoleDebugger )
-		consoleDebugger-> mode_.setMode( MODE_STOP );
+		consoleDebugger->mode_.setMode( MODE_STOP );
     return;
 }
 
@@ -60,6 +60,7 @@ static void showHelp( Console_I &con )
 		"\n E = Exec until $BREAK"
 		"\n B = Exec until breakpoint"
 		"\n X = Exec until RET"
+		"\n S = Show next lines of disassembly"
 		"\n R = Show reg names"
 		"\n M = Registers indirect dump"
 		"\n H = Hex dump current page"
@@ -248,7 +249,7 @@ void ConsoleDebugger::doCommand( int c )
 		showCharSet( systemConsole_ );
 		regLines = 0;
 	}
-	else if ( c == 'S' ) // HELP
+	else if ( c == 'S' ) // SHOW SOURCE
 	{
 		uint pc = helper_.getPC();
 		helper_.getSource( pc );

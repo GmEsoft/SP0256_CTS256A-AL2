@@ -12,7 +12,10 @@
 
 #include <iostream>
 
+// Number of READs after last input/output before entering DEBUG mode
 #define DEBUG_CTR_RELOAD 999999
+
+// Number of READs after eof and last output before stopping the emulation
 #define EOF_CTR_RELOAD 199999
 
 class CTS256A_AL2_Data_InOut

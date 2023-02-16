@@ -187,10 +187,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\DebugHelper_I.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\disas7000.cpp"
 				>
 			</File>
@@ -234,10 +230,6 @@
 			>
 			<File
 				RelativePath=".\Clock_I.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Color.h"
 				>
 			</File>
 			<File

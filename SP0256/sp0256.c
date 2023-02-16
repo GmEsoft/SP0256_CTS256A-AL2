@@ -72,6 +72,8 @@ static int s_debug = 0;
 #endif
 #endif
 
+static int s_debugSingleStep = 0;
+
 #define PER_PAUSE    (64)               /* Equiv timing period for pauses.  */
 #define PER_NOISE    (64)               /* Equiv timing period for noise.   */
 
@@ -968,13 +970,16 @@ static void sp0256_micro(ivoice_t *iv)
 			continue;
 
 
-        #ifdef SINGLE_STEP
-        jzp_printf("NEXT:\n"); jzp_flush();
+		if ( s_debugSingleStep )
+		{
+			jzp_printf("NEXT:"); jzp_flush();
         {
         char buf[1024];
-        fgets(buf,sizeof(buf),stdin); if (opcode != 0xF) repeat <<= 3;
+				fgets(buf,sizeof(buf),stdin); // if (opcode != 0xF) repeat <<= 3;
+				if ( toupper(*buf) == 'C' ) // (C)ontinue
+					s_debugSingleStep = 0;
+			}
         }
-        #endif
 
         iv->filt.rpt = repeat;
         jzdprintf(("repeat = %d\n", repeat));
@@ -1364,6 +1369,7 @@ void sp0256_setDebug( int debug )
 {
 	s_debug = debug & 1;
 	s_debugSample = debug & 2;
+	s_debugSingleStep = debug & 4;
 }
 
 // END   GmEsoft additions

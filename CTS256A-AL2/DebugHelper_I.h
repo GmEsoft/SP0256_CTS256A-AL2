@@ -7,8 +7,8 @@
 class DebugHelper_I
 {
 public:
-	DebugHelper_I(void);
-	virtual ~DebugHelper_I(void);
+	DebugHelper_I(void){}
+	virtual ~DebugHelper_I(void){}
 	virtual uint getPC() = 0;
 	virtual uint getSP() = 0;
 	virtual void sim() = 0;

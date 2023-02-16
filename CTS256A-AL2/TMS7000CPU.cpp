@@ -346,6 +346,7 @@ void TMS7000CPU::simop( const uchar opcode )
 	if ( pOpn2 )
 		opn2 = *pOpn2;
 
+	// Instructions not yet implemented have a "stop();" line.
 	switch ( instr.mnemon )
 	{
 	case ADC:	// Add with carry
@@ -538,7 +539,7 @@ void TMS7000CPU::simop( const uchar opcode )
 		}
 		else
 		{
-			stop();
+			stop(); // should not happen
 		}
 
 		break;
@@ -691,6 +692,7 @@ void TMS7000CPU::simop( const uchar opcode )
 
 }
 
+// Stop emulation in case of invalid or non-implemented instructions.
 void TMS7000CPU::stop()
 {
 	pc_ = pc0_;

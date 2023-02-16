@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #define NAME	"SP0256(tm) Emulator"
-#define VERSION	"v0.0.2-alpha"
+#define VERSION	"v0.0.3-alpha"
 
 
 #include "Win32Sleeper.h"
@@ -45,7 +45,7 @@ void help()
 		"-m012:    Select Intellivoice speech ROM\n"
 		"-e:       Echo speech elements (words or allophones)\n"
 		"-v:       Verbose mode\n"
-		"-d[D|S]   Set debug for [D]ebug or [S]amples\n"
+		"-d[D|S|T] Set debug for [D]ebug, [S]amples or [T]race\n"
 		"-xClkFreq Xtal Clock Frequency in Hz (range: 1000000..5000000)\n"
 		"-iInFile  Say File\n"
 		"-i-       Say from stdin: echo ... | sp0256 -i-\n"
@@ -87,6 +87,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int debug = 0;
 	dict_t dict;
 	int xtal = 3120000;
+	int waveFreq = 0;
 
 	const char* waveFileName = 0;
 
@@ -153,6 +154,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				break;
 			case 'W': // Output to .WAV file
 				++s;
+				if ( isdigit( *s ) )
+					sscanf_s( s, "%d", &waveFreq );
+				while ( isdigit( *s ) )
+					++s;
 				if ( *s == ':' )
 					++s;
 				waveFileName = s;
@@ -170,10 +175,12 @@ int _tmain(int argc, _TCHAR* argv[])
 					++s;
 				while ( *s )
 				{
-					if ( toupper( *s ) == 'D' )
+					if ( toupper( *s ) == 'T' ) // Trace
 						debug |= 1;
-					else if ( toupper( *s ) == 'S' )
+					else if ( toupper( *s ) == 'S' ) // Samples
 						debug |= 2;
+					else if ( toupper( *s ) == 'D' ) // Debug (single step)
+						debug |= 5;
 					++s;
 				}
 				if ( !debug )
@@ -242,16 +249,24 @@ int _tmain(int argc, _TCHAR* argv[])
 	if ( mode == 'T' )
 	{
 		// Load "Narrator" dictionary
-		for ( size_t i=0; i < ( model==_AL2 ? sp0256_al2::nlabels : model==_012 ? sp0256_012::nlabels : 0 ); ++i )
+		for ( size_t i=0; 
+			i < ( model==_AL2 ? sp0256_al2::nlabels 
+				: model==_012 ? sp0256_012::nlabels 
+				: 0 ); 
+			++i )
 		{
-			dict[ model==_AL2 ? sp0256_al2::labels[i] : model==_012 ? sp0256_012::labels[i] : "" ] = i;
+			dict[ model==_AL2 ? sp0256_al2::labels[i] 
+				: model==_012 ? sp0256_012::labels[i] 
+				: "" ] = i;
 		}
 	}
 
 	WaveWriter waveWriter;
 	if ( !errno_ && waveFileName )
 	{
-		errno_ = waveWriter.create( fileName = waveFileName, freq, 1, 8 );
+		if ( waveFreq < freq )
+			waveFreq = freq;
+		errno_ = waveWriter.create( fileName = waveFileName, waveFreq, freq, 1, 8 );
 	}
 
 	if ( errno_ )
@@ -417,8 +432,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf( "xtal=%d - freq=%d\n", xtal, freq );
 		printf( "numSamples=%d - time=%8.4f s - minSample=%d - maxSample=%d - samplesMask=0x%X\n", cnt, cnt*1./freq, minSample, maxSample, bitsSample );
 		puts( "Finished." );
-		//puts( "Finished. Press ENTER." );
-		//getchar();
 	}
 
 	_flushall(); // seems needed when redirecting stdout to file ...

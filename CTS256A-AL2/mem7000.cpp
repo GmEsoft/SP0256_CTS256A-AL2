@@ -41,7 +41,6 @@ unsigned char putdata(unsigned short addr, unsigned char byte)
 	}
 	ranges[nranges-1].end = addr + 1;
 
-    //if(addr==0x4BFC) stop();
     return byte;
 }
 
@@ -51,7 +50,6 @@ unsigned char getdata(unsigned short addr)
 	unsigned char byte;
 
     byte = data[addr];
-    //if(addr==0x4BFC) stop();
     return (unsigned char)byte;
 }
 

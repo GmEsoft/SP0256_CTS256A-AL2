@@ -4,7 +4,7 @@
 #include "stdafx.h"
 
 #define NAME	"CTS256A-AL2(tm) Emulator"
-#define VERSION	"v0.0.1-alpha"
+#define VERSION	"v0.0.3-alpha"
 
 #include "ConIOConsole.h"
 #include "CTS256A_AL2.h"
