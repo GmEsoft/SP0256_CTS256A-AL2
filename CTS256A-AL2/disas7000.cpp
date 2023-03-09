@@ -1,3 +1,28 @@
+/*
+    CTS256A-AL2 - TMS7000 Disassembler.
+
+    Created by Michel Bernard (michel_bernard@hotmail.com)
+    - <http://www.github.com/GmEsoft/SP0256_CTS256A-AL2>
+    Copyright (c) 2023 Michel Bernard.
+    All rights reserved.
+
+
+    This file is part of SP0256_CTS256A-AL2.
+
+    SP0256_CTS256A-AL2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SP0256_CTS256A-AL2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP0256_CTS256A-AL2.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #define _CRT_SECURE_NO_WARNINGS 1
 
 #include <assert.h>
@@ -172,7 +197,7 @@ void setLabelGen( uint val )
 char* getLabelOffset(uint val)
 {
     static char name[40] ;
-	int i;
+	unsigned i;
 
     symbol_t symtofind[1];
     symbol_t *sym;
@@ -256,7 +281,7 @@ char* getLastComment()
 char* getDataAddr ()
 {
 	static char addr[41];
-	unsigned x, i;
+	unsigned x;
 	symbol_t symtofind;
 	symbol_t *sym;
 
@@ -387,7 +412,7 @@ char* getOperand2(int opcode)
 // add comment if any
 void addComment( char *src, int size, char *comment )
 {
-	int n;
+	size_t n;
 
 	if ( comment )
 	{
@@ -405,8 +430,7 @@ char* source ()
 {
 	ushort opcode;
 	static char src[80];
-	char substr[41];
-	int i;
+	size_t i;
 	char* op;
 
 	opcode = fetch ();

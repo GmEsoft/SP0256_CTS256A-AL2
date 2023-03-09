@@ -1,3 +1,28 @@
+/*
+    SP0256A - System Clock.
+
+    Created by Michel Bernard (michel_bernard@hotmail.com)
+    - <http://www.github.com/GmEsoft/SP0256_CTS256A-AL2>
+    Copyright (c) 2023 Michel Bernard.
+    All rights reserved.
+
+
+    This file is part of SP0256_CTS256A-AL2.
+
+    SP0256_CTS256A-AL2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SP0256_CTS256A-AL2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP0256_CTS256A-AL2.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include "SystemClock.h"
 
 #include <time.h>
@@ -44,7 +69,7 @@ void SystemClock::runCycles(long cycles)
 
 			long s = clock100_;
 			long timeout = 500L;
-			
+
 			while ( s == clock100_  )
 			{
 				s = clock() / ( CLOCKS_PER_SEC / throttleFreq_ );
@@ -58,7 +83,7 @@ void SystemClock::runCycles(long cycles)
 					}
 				}
 			}
-			
+
 			// ds = elapsed hundredths of seconds
 			long ds = s - clock100_;
 			clock100_ = s;

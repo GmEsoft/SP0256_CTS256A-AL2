@@ -1,10 +1,33 @@
-// main.cpp : Defines the entry point for the console application.
-//
+/*
+    SP0256 - Main module.
+
+    Created by Michel Bernard (michel_bernard@hotmail.com)
+    - <http://www.github.com/GmEsoft/SP0256_CTS256A-AL2>
+    Copyright (c) 2023 Michel Bernard.
+    All rights reserved.
+
+
+    This file is part of SP0256_CTS256A-AL2.
+
+    SP0256_CTS256A-AL2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SP0256_CTS256A-AL2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP0256_CTS256A-AL2.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 
 #include "stdafx.h"
 
 #define NAME	"SP0256(tm) Emulator"
-#define VERSION	"v0.0.3-alpha"
+#define VERSION	"v0.0.4-alpha"
 
 
 #include "Win32Sleeper.h"
@@ -41,10 +64,10 @@ void help()
 		"GI/Microchip SP0256-AL2 Narrator(tm) and SP0256-012 Intellivoice(tm) Speech Processor\n\n"
 		"Usage:\n"
 		"sp0256 [-m{AL2|012}] [-e] [-v] [-xClockFreq] [ -t | -b | -a ] [ -i{inFile|-} ] [-wWavFile]\n"
-		"-mAL2:    Select Narrator(tm) speech ROM\n"
-		"-m012:    Select Intellivoice speech ROM\n"
-		"-e:       Echo speech elements (words or allophones)\n"
-		"-v:       Verbose mode\n"
+		"-mAL2     Select Narrator(tm) speech ROM\n"
+		"-m012     Select Intellivoice speech ROM\n"
+		"-e        Echo speech elements (words or allophones)\n"
+		"-v        Verbose mode\n"
 		"-d[D|S|T] Set debug for [D]ebug, [S]amples or [T]race\n"
 		"-xClkFreq Xtal Clock Frequency in Hz (range: 1000000..5000000)\n"
 		"-iInFile  Say File\n"
@@ -236,7 +259,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	int nAl2 = 0;
-	int al2 = 0, lastal2 = 0, preval2 = 0;
+	size_t al2 = 0, lastal2 = 0, preval2 = 0;
 	unsigned cnt = 0;
 	int last = 0;
 	int freq = xtal/2/156;
@@ -278,7 +301,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 1;
 	}
 
-	int sample, *al2s, al2max;
+	int sample, *al2s;
+	size_t al2max;
 	const char* *sp0256_labels;
 
 	if ( model == _AL2 )
@@ -383,7 +407,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				preval2 = lastal2;
 				lastal2 = al2;
 
-				sp0256_sendCommand( al2 );
+				sp0256_sendCommand( uint32_t( al2 ) );
 			}
 		}
 
@@ -424,8 +448,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		outWaveFlush();
 	}
-
-	//fclose( out );
 
 	if ( verbose )
 	{

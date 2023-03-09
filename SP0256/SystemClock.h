@@ -1,3 +1,28 @@
+/*
+    SP0256A - System Clock.
+
+    Created by Michel Bernard (michel_bernard@hotmail.com)
+    - <http://www.github.com/GmEsoft/SP0256_CTS256A-AL2>
+    Copyright (c) 2023 Michel Bernard.
+    All rights reserved.
+
+
+    This file is part of SP0256_CTS256A-AL2.
+
+    SP0256_CTS256A-AL2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SP0256_CTS256A-AL2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP0256_CTS256A-AL2.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 
 #include "Clock_I.h"
@@ -10,8 +35,8 @@ class SystemClock :
 	public Clock_I
 {
 public:
-	SystemClock(void) : 
-		clockSpeed_( 0 ), clock100_( -1L ), rtcRate_( 30 ), rtcTest_( 0 ), 
+	SystemClock(void) :
+		clockSpeed_( 0 ), clock100_( -1L ), rtcRate_( 30 ), rtcTest_( 0 ),
 		throttleFreq_( 100 ), cycles_( 0 ), sleeper_( 0 ), irq_( 0 ), cyclesMult_( 1 ),
 		autoCycles_( 0 ), autoTurbo_( false ), turbo_( false )
 	{
@@ -76,12 +101,12 @@ public:
 			irq_->trigger();
 	}
 
-	
+
 protected:
 	long			clockSpeed_;		// Clock speed in kHz
 	long			clock100_;			// Clock as n/100 sec from midnight
 	long			rtcRate_;			// RTC rate in Hz
-	long			rtcTest_;			// 
+	long			rtcTest_;			//
 	long			throttleFreq_;		//
 	long			cycles_;			// cycles to consume
 	long			cyclesMult_;		// cycles multiplier

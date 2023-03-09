@@ -1,3 +1,28 @@
+/*
+    CTS256A-AL2 - TMS7000 CPU Emulator.
+
+    Created by Michel Bernard (michel_bernard@hotmail.com)
+    - <http://www.github.com/GmEsoft/SP0256_CTS256A-AL2>
+    Copyright (c) 2023 Michel Bernard.
+    All rights reserved.
+
+
+    This file is part of SP0256_CTS256A-AL2.
+
+    SP0256_CTS256A-AL2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SP0256_CTS256A-AL2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP0256_CTS256A-AL2.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #pragma warning(disable:4244)	// warning C4244: '%0' : conversion from '%1' to '%2', possible loss of data
 
 #include "TMS7000CPU.h"
@@ -61,20 +86,20 @@ void TMS7000CPU::reset( void )
 
 	// 2) All Os are written to the IOCNTO register. This disables INT1*, INT2, and
 	//    INT3* and leaves the INTn flag bits unchanged.
-	iocnt0_ = 0;	
+	iocnt0_ = 0;
 
 	// 3) All Os are written to the IOCNT1 register in the TMS70x2 and
 	//    TMS70Cx2 devices. This disables INT4 and INT5.
-	iocnt1_ = 0;	
+	iocnt1_ = 0;
 
 	// 4) The PC's MSB and LSB values before RESET* was asserted are stored in
 	//    R0 and R1 (registers A and B), respectively.
 	*a = pc_ >> 8;
 	*b = pc_ & 0xFF;
-	
+
 	// 5) The Stack Pointer is initialized to >01.
 	sp = 1;
-	
+
 	// 6) The MSB and LSB of the RESET interrupt vector are fetched from locations
 	//    >FFFE and >FFFF, respectively (see Table 3-13, page 3-26),
 	//    and loaded into the Program Counter.
@@ -186,14 +211,14 @@ void TMS7000CPU::simintprocess()
 			itrap = 3/*, stop()*/;
 		else
 			return;
-		
+
 		itrap = 0xFFFE - ( itrap << 1 );
 		data[++sp] = st;
 		data[++sp] = pc_ >> 8;
 		data[++sp] = pc_ & 0xFF;
 		pSt->i = 0;
 		pc_ = ( getdata( itrap ) << 8 ) | getdata( itrap+1 );
-	}	
+	}
 	return;
 
 }
@@ -528,9 +553,9 @@ void TMS7000CPU::simop( const uchar opcode )
 			pOpn1 = 0;
 		}
 
-		if ( pOpn2 ) 
+		if ( pOpn2 )
 		{
-			*(pOpn2-1) = res = word >> 8; 
+			*(pOpn2-1) = res = word >> 8;
 			*pOpn2 = word & 0xFF;
 			pOpn2 = 0;
 			pSt->c = 0;
@@ -546,11 +571,11 @@ void TMS7000CPU::simop( const uchar opcode )
 	case MOVP:	// Move to/from peripheral register
 		if ( instr.opn1 == PN )
 			opn1 = this->indata( opn1 );
-		
+
 		pSt->c = 0;
 		pSt->n = ( opn1 >> 7 ) & 1;
 		pSt->z = opn1 == 0;
-		
+
 		if ( instr.opn2 == PN )
 		{
 			this->outdata( opn2, opn1 );
@@ -560,7 +585,7 @@ void TMS7000CPU::simop( const uchar opcode )
 		{
 			opn2 = opn1;
 		}
-		
+
 		pOpn1 = 0;
 		break;
 	case MPY:	// Multiply

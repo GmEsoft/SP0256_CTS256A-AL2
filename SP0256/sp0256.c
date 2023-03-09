@@ -2,6 +2,7 @@
  * ============================================================================
  *  Title:    Intellivoice Emulation
  *  Author:   J. Zbiciak
+ *  Mods:     Michel BERNARD (GmEsoft)
  * ============================================================================
  *  This module actually attempts to emulate the Intellivoice.  Wild!
  * ============================================================================
@@ -83,6 +84,8 @@ static int s_debugSingleStep = 0;
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
 #include "sp0256.h"
 
 #define CONDFREE(p)  if (p) free(p)
@@ -218,7 +221,7 @@ static int lpc12_update(lpc12_t *f, int num_samp, int16_t *out, uint32_t *optr)
             samp   = f->amp;
             do_int = f->interp;
         }
-		
+
 		--f->cnt;
 
         if (!f->per)
@@ -966,7 +969,7 @@ static void sp0256_micro(ivoice_t *iv)
         /*  Otherwise, if we have a repeat count, then go grab the data     */
         /*  block and feed it to the filter.                                */
         /* ---------------------------------------------------------------- */
-        if (!repeat) 
+        if (!repeat)
 			continue;
 
 
@@ -1052,7 +1055,7 @@ static void sp0256_micro(ivoice_t *iv)
             /* ------------------------------------------------------------ */
             if (delta)  /* Sign extend */
             {
-                if (value & (1u << (len - 1))) value |= -(1u << len);
+                if (value & (1u << (len - 1))) value |= -(int)(1u << len);
             }
 
             /* ------------------------------------------------------------ */
@@ -1329,13 +1332,13 @@ int sp0256_getNextSample()
 	if (ivoice->filt.rpt <= 0 && ivoice->filt.cnt <= 0)
         sp0256_micro(ivoice);
 
-	if  (	ivoice->halted 
-		||	( ivoice->silent && ivoice->filt.rpt <= 0 && ivoice->filt.cnt <= 0 ) 
+	if  (	ivoice->halted
+		||	( ivoice->silent && ivoice->filt.rpt <= 0 && ivoice->filt.cnt <= 0 )
 		)
 	{
 		out = 0;
-    } 
-	else 
+    }
+	else
 	{
 		lpc12_update(&ivoice->filt, 1, &out, &optr);
     }

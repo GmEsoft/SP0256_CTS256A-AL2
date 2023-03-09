@@ -1,10 +1,32 @@
-// CTS256A-AL2.cpp : Defines the entry point for the console application.
-//
+/*
+    CTS256A-AL2 - Main Module.
+
+    Created by Michel Bernard (michel_bernard@hotmail.com)
+    - <http://www.github.com/GmEsoft/SP0256_CTS256A-AL2>
+    Copyright (c) 2023 Michel Bernard.
+    All rights reserved.
+
+
+    This file is part of SP0256_CTS256A-AL2.
+
+    SP0256_CTS256A-AL2 is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    SP0256_CTS256A-AL2 is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with SP0256_CTS256A-AL2.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 #include "stdafx.h"
 
 #define NAME	"CTS256A-AL2(tm) Emulator"
-#define VERSION	"v0.0.3-alpha"
+#define VERSION	"v0.0.4-alpha"
 
 #include "ConIOConsole.h"
 #include "CTS256A_AL2.h"
@@ -22,24 +44,25 @@ void help()
 	puts(
 		"GI/Microchip CTS256A-AL2(tm) Code-To-Speech Speech Processor\n\n"
 		"Usage:\n"
-		"cts256a-al2 [-Ifile] [-T] [-B] [-E] [-D] [-V] [-N] [text]\n"
-		" -Ifile:   Optional input filename\n"
-		" -T:       Select text output (allophone labels) (default)\n"
-		" -B:       Select binary output (range 40..7F)\n"
-		" -E:       Echo input text\n"
-		" -V:       Verbose mode\n"
-		" -D:       Debug mode\n"
-		" -N:       Suppress 'O.K.'\n"
+		"cts256a-al2 [-iFile] [-t] [-b] [-e] [-d] [-v] [-n] [text]\n"
+		" -iFile    Optional input filename\n"
+		" -t        Select text output (allophone labels) (default)\n"
+		" -b        Select binary output (range 40..7F)\n"
+		" -e        Echo input text\n"
+		" -v        Verbose mode\n"
+		" -d        Debug mode\n"
+		" -n        Suppress 'O.K.'\n"
+		" --        Stop parsing options\n"
 		" text      Optional text to convert\n"
-		"If no -Ifile or text is specified, reads input from stdin\n"
-		"Example: echo Hello World. | CTS256A-AL2.exe -N | SP0256.exe -T-\n"
+		"If no -iFile and no text is given, reads input from stdin.\n"
+		"Example: echo Hello World. | CTS256A-AL2.exe -n | SP0256.exe -i-\n"
 	);
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	char mode = 'T';
-	bool echo = false, debug = false, verbose = false, noOK = false;
+	bool echo = false, debug = false, verbose = false, noOK = false, opts = true;
 
 	std::istream *pistr = &std::cin;
 	std::ostream *postr = &std::cout;
@@ -55,7 +78,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		char *s = argv[i];
 		char c = 0;
 
-		if ( *s == '-' )
+		if ( opts && *s == '-' )
 		{
 			++s;
 			switch ( toupper( *s ) )
@@ -93,6 +116,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 'N': // No OK
 				noOK = 1;
 				break;
+			case '-': // End opts
+				opts = false;
+				break;
 			case '?': // Help
 				help();
 				return 0;
@@ -107,6 +133,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			sstr << " " << s;
 			pistr = &sstr;
 			noOK = true;
+			opts = false;
 		}
 	}
 
