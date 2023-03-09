@@ -3,6 +3,8 @@ G.I./Microchip SP0256 Speech Processor and CTS256A-AL2 Text-To-Speech Processor 
 
 Version 0.0.4-alpha.
 
+A pre-release of the executables (Win32-x86) can be found under 'Releases'.
+
 
 ## Description
 
