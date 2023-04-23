@@ -42,7 +42,6 @@
 
 #include <map>
 #include <string>
-#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -53,12 +52,12 @@ using namespace sp0256_al2;
 
 typedef std::map< std::string, size_t > dict_t;
 
-static enum model_t
+enum model_t
 {
 	_012, _AL2
 };
 
-static void help()
+void help()
 {
 	puts(
 		NAME " - " VERSION "\n\n"
@@ -82,7 +81,7 @@ static void help()
 
 // SP0256-AL2 "Narrator" Sample Speech
 // "SP0256-AL2 Narrator"
-static int codes_al2[] = { 
+int codes_al2[] = { 
 	EH, EH, SS, SS, PA2,
 	PP, IY, PA2,
 	ZZ, YR, OW, PA2,
@@ -98,15 +97,7 @@ static int codes_al2[] = {
 
 // SP0256-012 "Intellivoice" Sample Speech
 // "Mattel Electronics Presents - Zero Two Five Six - And - Zero One Two"
-static int codes_012[] = { 6, 2, 7, 9, 12, 13, 2, 42, 2, 7, 8, 9, -1 };
-
-
-static std::string toUpperCase( const std::string &str )
-{
-	std::string uStr = str;
-	std::transform( uStr.begin(), uStr.end(), uStr.begin(), ::toupper );
-	return uStr;
-}
+int codes_012[] = { 6, 2, 7, 9, 12, 13, 2, 42, 2, 7, 8, 9, -1 };
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -287,10 +278,9 @@ int _tmain(int argc, _TCHAR* argv[])
 				: 0 ); 
 			++i )
 		{
-			dict[ toUpperCase(
-				  model==_AL2 ? sp0256_al2::labels[i] 
+			dict[ model==_AL2 ? sp0256_al2::labels[i] 
 				: model==_012 ? sp0256_012::labels[i] 
-				: "" ) ] = i;
+				: "" ] = i;
 		}
 	}
 

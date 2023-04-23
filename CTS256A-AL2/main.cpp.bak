@@ -137,8 +137,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	std::cin.sync_with_stdio();
-
 	CTS256A_AL2 system( *pistr, *postr );
 
 	system.setOption( 'D', debug );

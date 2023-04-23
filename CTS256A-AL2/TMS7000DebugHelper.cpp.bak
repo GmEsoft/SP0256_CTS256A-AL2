@@ -104,10 +104,8 @@ const char *TMS7000DebugHelper::getPointer( int n, uint &ptr )
 bool TMS7000DebugHelper::isCall( uint pc )
 {
 	uchar x = cpu_.getcode( pc );
-	return	(	x == 0x8E							// CALL nnnn
-			||	x == 0x9E							// CALL @Rn
-			||	x == 0xAE							// CALL nnnn(B)
-			||	x >= 0xE8							// TRAP nn
+	return	(	x == 0x12							// LCALL nnnn
+			||	( x & 0x1F ) == 0x11				// ACALL nnnn
 			);
 }
 
