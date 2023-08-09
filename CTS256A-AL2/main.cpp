@@ -76,7 +76,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	for ( int i=1; i<argc; ++i )
 	{
 		char *s = argv[i];
-		char c = 0;
 
 		if ( opts && *s == '-' )
 		{

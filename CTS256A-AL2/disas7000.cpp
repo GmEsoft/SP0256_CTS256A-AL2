@@ -154,7 +154,7 @@ static char getCodeSeg()
 
 
 // get label of given code address
-char* getLabel(uint val, char ds)
+char* getLabel(uint val, char /*ds*/)
 {
     static char name[40] ;
 
@@ -225,7 +225,7 @@ char* getLabelOffset(uint val)
 }
 
 // Data Read Routine (memory address space)
-uchar getData_null(ushort addr)
+uchar getData_null(ushort /*addr*/)
 {
 	return 0xFF;
 }
@@ -240,7 +240,7 @@ void setTms7000MemIO( readfptr_t getData )
 #define getData (*vgetData)
 
 //  get next instruction byte (sim)
-#define fetch() (getData(pc++))
+#define fetch() getData( ushort( pc++ ) )
 
 //  return hex-string or label for double-byte x (dasm)
 char* getXAddr( uint x )
@@ -400,28 +400,28 @@ char* getOperand(int opcode, int opn)
 // get 1st operand name or value
 char* getOperand1(int opcode)
 {
-	return getOperand(opcode, instr[opcode].opn1);
+	return getOperand(opcode, instrTable[opcode].opn1);
 }
 
 // get 2nd operand name or value
 char* getOperand2(int opcode)
 {
-	return getOperand(opcode, instr[opcode].opn2);
+	return getOperand(opcode, instrTable[opcode].opn2);
 }
 
 // add comment if any
-void addComment( char *src, int size, char *comment )
+void addComment( char *src, int size, char *pComment )
 {
 	size_t n;
 
-	if ( comment )
+	if ( pComment )
 	{
 		for ( n = strlen( src ); n < 24; ++n )
 		{
 			src[n] = ' ';
 		}
 		src[n] = 0;
-		strncat_s( src, size, comment, size - n - 1 );
+		strncat_s( src, size, pComment, size - n - 1 );
 	}
 }
 
@@ -435,7 +435,7 @@ char* source ()
 
 	opcode = fetch ();
 
-	strcpy (src, mnemo[instr[opcode].mnemon]);
+	strcpy (src, mnemo[instrTable[opcode].mnemon]);
 
 	for (i=strlen(src);i<8;i++)
 		src[i] = ' ';
@@ -453,7 +453,7 @@ char* source ()
 		{
 			strcat( src, "," );
 			strcat( src, op );
-			switch( instr[opcode].mnemon )
+			switch( instrTable[opcode].mnemon )
 			{
 			case BTJO:
 			case BTJOP:
@@ -480,7 +480,7 @@ char* source ()
 // PROCESSOR INSTRUCTIONS TABLE ///////////////////////////////////////////////
 
 //  Processor's instruction set
-instr_t instr[] = {
+instr_t instrTable[] = {
 //		mnemon,			opn1,			opn2
 // 00-0F
 		NOP,            0,              0,

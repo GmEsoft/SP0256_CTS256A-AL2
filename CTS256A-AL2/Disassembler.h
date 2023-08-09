@@ -58,7 +58,7 @@ public:
 	// fetch
 	uchar fetch()
 	{
-		return code_ ? code_->read( pc_++ ) : 0;
+		return code_ ? code_->read( ushort( pc_++ ) ) : 0;
 	}
 
 	// set symbols table

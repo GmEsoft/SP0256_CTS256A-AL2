@@ -53,7 +53,7 @@ using namespace sp0256_al2;
 
 typedef std::map< std::string, size_t > dict_t;
 
-static enum model_t
+enum model_t
 {
 	_012, _AL2
 };
@@ -124,7 +124,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	const char* waveFileName = 0;
 
 	int errno_ = 0;
-	const char *fileName;
+	const char *fileName = 0;
 
 	std::istream *pistr = &std::cin;
 	std::stringstream sstr;
@@ -133,7 +133,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	for ( int i=1; i<argc; ++i )
 	{
 		char *s = argv[i];
-		char c = 0;
 
 		if ( *s == '-' )
 		{
@@ -268,7 +267,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	int nAl2 = 0;
-	size_t al2 = 0, lastal2 = 0, preval2 = 0;
+	int al2 = 0, lastal2 = 0, preval2 = 0; // signed int !!
 	unsigned cnt = 0;
 	int last = 0;
 	int freq = xtal/2/156;
@@ -311,21 +310,21 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 1;
 	}
 
-	int sample, *al2s;
-	size_t al2max;
-	const char* *sp0256_labels;
+	int sample, *codes = 0;
+	int codemax = 0;
+	const char* *sp0256_labels = 0;
 
 	if ( model == _AL2 )
 	{
-		al2s = codes_al2;
-		al2max = sp0256_al2::nlabels - 1;
+		codes = codes_al2;
+		codemax = sp0256_al2::nlabels - 1;
 		sp0256_labels = sp0256_al2::labels;
 		sp0256_setLabels( sp0256_al2::nlabels, sp0256_al2::labels );
 	} 
 	else if ( model == _012 )
 	{
-		al2s = codes_012;
-		al2max = sp0256_012::nlabels - 1;
+		codes = codes_012;
+		codemax = sp0256_012::nlabels - 1;
 		sp0256_labels = sp0256_012::labels;
 		sp0256_setLabels( sp0256_012::nlabels, sp0256_012::labels );
 	}
@@ -369,7 +368,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					
 					if ( isalnum( c ) )
 					{
-						sym += toupper( c );
+						sym += char( toupper( c ) );
 						const dict_t::const_iterator it = dict.find( sym );
 						if ( it != dict.end() )
 						{
@@ -392,12 +391,12 @@ int _tmain(int argc, _TCHAR* argv[])
 				break;
 			case 'A':	// Play all sounds/allophones
 				al2 = nAl2++;
-				if ( al2 > al2max )
+				if ( al2 > codemax )
 					eos = 1;
 				break;
 			case 'D':	// Demo mode, play sample speech
 			default:
-				al2 = al2s[nAl2++];
+				al2 = codes[nAl2++];
 				if ( al2 < 0 )
 					eos = 1;
 				break;
@@ -443,7 +442,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		else
 		{
-			outWave( sample, sample );
+			outWave( uchar( sample ), uchar( sample ) );
 			systemClock.runCycles( 1000 );
 			outWaveCycles( 1 );
 		}

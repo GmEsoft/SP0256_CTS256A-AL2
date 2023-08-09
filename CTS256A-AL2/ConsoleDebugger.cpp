@@ -33,7 +33,7 @@
 
 static ConsoleDebugger *consoleDebugger = 0;
 
-static void sigbreakhandler(int s)
+void sigbreakhandler(int)
 {
 	if ( consoleDebugger )
 		consoleDebugger->mode_.setMode( MODE_STOP );
@@ -262,7 +262,7 @@ void ConsoleDebugger::doCommand( int c )
 				break;
 
 			systemConsole_.printf( "%s=", ptrName );
-			hexDumpLine( systemConsole_, helper_.getData(), ptr );
+			hexDumpLine( systemConsole_, helper_.getData(), ushort(ptr) );
 		}
 	}
 	else if ( c == ' ' || c == 'I' ) // INSTRUCTION STEP
@@ -276,12 +276,12 @@ void ConsoleDebugger::doCommand( int c )
 	}
 	else if ( c == 'S' ) // SHOW SOURCE
 	{
-		uint pc = helper_.getPC();
-		helper_.getSource( pc );
+		uint pctemp = helper_.getPC();
+		helper_.getSource( pctemp );
 		for ( uint i=3; i<lines_; ++i )
 		{
 			systemConsole_.println();
-			helper_.printSource( systemConsole_, pc );
+			helper_.printSource( systemConsole_, pctemp );
 		}
 		regLines = 0;
 	}

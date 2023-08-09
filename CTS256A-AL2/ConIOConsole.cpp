@@ -28,7 +28,7 @@
 #include <signal.h>
 #include <conio.h>
 
-static void siginthandler (int s)
+static void siginthandler (int) noexcept
 {
     signal(SIGINT,siginthandler);   // reinstall signal handler
 	_ungetch( 3 );

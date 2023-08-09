@@ -93,7 +93,7 @@ uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 	{
 		if ( verbose_ )
 			cpu_.printf( " - avail %d:", istr_.rdbuf()->in_avail() );
-		uchar c = istr_.get();
+		uchar c = uchar( istr_.get() );
 		if ( eof_ || istr_.eof() )
 		{
 			eof_ = true;
@@ -214,7 +214,6 @@ uchar CTS256A_AL2_Data_InOut::in( ushort addr )
 	default:
 		return 0xFF;
 	}
-	return 0xFF;
 }
 
 uchar CTS256A_AL2_Data_InOut::out( ushort addr, uchar data )
@@ -245,7 +244,6 @@ uchar CTS256A_AL2_Data_InOut::out( ushort addr, uchar data )
 	default:
 		return data;
 	}
-	return data;
 }
 
 void CTS256A_AL2_Data_InOut::setOption( uchar option, uint value )

@@ -67,7 +67,7 @@ extern int		pcOffset;
 extern ushort	pcOffsetBeg, pcOffsetEnd;
 extern char		pcOffsetSeg;
 
-extern instr_t instr[];
+extern instr_t instrTable[];
 
 // Attach TMS7000 to external symbol table
 void setTms7000Symbols( symbol_t *pSymbols, int pNSymbols, int pSymbolsSize );

@@ -1,9 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SP0256", "SP0256\SP0256.vcproj", "{486DA70C-C9FE-4A06-A40E-A685833AC40F}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.33801.198
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SP0256", "SP0256\SP0256.vcxproj", "{486DA70C-C9FE-4A06-A40E-A685833AC40F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTS256A-AL2", "CTS256A-AL2\CTS256A-AL2.vcproj", "{1E1CE4C7-A024-4278-A3B1-362FE36484C0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CTS256A-AL2", "CTS256A-AL2\CTS256A-AL2.vcxproj", "{1E1CE4C7-A024-4278-A3B1-362FE36484C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B7D946C-F881-4AFE-94BF-60BADB1F1138}
 	EndGlobalSection
 EndGlobal

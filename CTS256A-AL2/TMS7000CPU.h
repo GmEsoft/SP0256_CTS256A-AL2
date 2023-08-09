@@ -72,13 +72,13 @@ public:
 
 	// Memory_I interface
 	// write char
-	virtual uchar write( ushort addr, uchar data )
+	virtual uchar write( ushort addr, uchar byte )
 	{
 		if ( addr < 0x100 )
-			this->data[addr] = data;
+			this->data[addr] = byte;
 		else if ( addr >= 0x200 && this->pExtData_ )
-			this->pExtData_->write( addr, data );
-		return data;
+			this->pExtData_->write( addr, byte );
+		return byte;
 	}
 
 	// read char
@@ -188,13 +188,12 @@ public:
 	void stop();
 
 public:
-	static instr_t	instr[];
+	static instr_t	instrTable[];
 
 protected:
 
 private:
 	long			cycles;
-	ushort			opcode;
 	uchar			irq/*, nmi*/;
 	uchar			data[256];
 	uchar			*a, *b;

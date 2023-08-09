@@ -59,7 +59,7 @@ public:
 
 private:
 	int ch_;
-	bool autolf_;
 	int backspace_;
+	bool autolf_;
 };
 

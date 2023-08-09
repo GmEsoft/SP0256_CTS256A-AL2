@@ -134,21 +134,21 @@ char TMS7000CPU::getNMI( void )
 
 // InOut_I interface
 // out char
-uchar TMS7000CPU::out( ushort addr, uchar data )
+uchar TMS7000CPU::out( ushort addr, uchar byte )
 {
 	switch ( addr )
 	{
 	case 0:	// IOCNT0
-		iocnt0_ = ( data & ~0x2A ) | ( iocnt0_ & 0x2A & ~data );
+		iocnt0_ = ( byte & ~0x2A ) | ( iocnt0_ & 0x2A & ~byte );
 		break;
 	case 16:// IOCNT1
-		iocnt1_ = ( data & ~0xFA ) | ( iocnt1_ & 0x0A & ~data );
+		iocnt1_ = ( byte & ~0xFA ) | ( iocnt1_ & 0x0A & ~byte );
 		break;
 	default:
 		if ( pExtInOut_ )
-			pExtInOut_->out( addr, data );
+			pExtInOut_->out( addr, byte );
 	}
-	return data;
+	return byte;
 }
 
 // in char
@@ -229,7 +229,7 @@ void TMS7000CPU::sim()
 	pc0_ = pc_;
 
 	// Fetch opcode
-	opcode = fetch();
+	uchar opcode = fetch();
 
 	intblocked = 0;
 
@@ -249,13 +249,13 @@ void TMS7000CPU::sim()
 	cycles = 0;
 }
 
-void TMS7000CPU::simop( const uchar opcode )
+void TMS7000CPU::simop( const uchar opCode )
 {
-	const instr_t &instr = this->instr[opcode];
+	const instr_t &instr = this->instrTable[opCode];
 	uchar *pOpn1 = 0, *pOpn2 = 0;
-	uchar opn1, opn2, byte;
+	uchar opn1 = 0, opn2 = 0, byte;
 	ushort res;
-	ushort word;
+	ushort word = 0;
 
 	switch ( instr.opn1 )
 	{
@@ -301,7 +301,7 @@ void TMS7000CPU::simop( const uchar opcode )
 	case N: 		// ??
 		break;
 	case NTRAP: 	// TRAP n
-		word = 0xFFFE - ( ( 0xFF - opcode ) << 1 );
+		word = 0xFFFE - ( ( 0xFF - opCode ) << 1 );
 		word = ( this->getdata( word ) << 8 ) | this->getdata( word + 1 );
 		break;
 	case OPCODE:	// DB opcode
@@ -358,7 +358,7 @@ void TMS7000CPU::simop( const uchar opcode )
 	case N: 		// ??
 		break;
 	case NTRAP: 	// TRAP n
-		word = 0xFFFE - ( ( 0xFF - opcode ) << 1 );
+		word = 0xFFFE - ( ( 0xFF - opCode ) << 1 );
 		word = ( this->getdata( word ) << 8 ) | this->getdata( word + 1 );
 		break;
 	case OPCODE:	// DB opcode
@@ -728,7 +728,7 @@ void TMS7000CPU::stop()
 // PROCESSOR INSTRUCTIONS TABLE ///////////////////////////////////////////////
 
 //  Processor's instruction set
-instr_t TMS7000CPU::instr[] = {
+instr_t TMS7000CPU::instrTable[] = {
 //		mnemon,			opn1,			opn2
 // 00-0F
 		NOP,            0,              0,
