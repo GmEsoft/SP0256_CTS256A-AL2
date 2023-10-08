@@ -27,7 +27,7 @@
 #include "stdafx.h"
 
 #define NAME	"SP0256(tm) Emulator"
-#define VERSION	"v0.0.4-alpha"
+#define VERSION	"v0.0.6-alpha"
 
 
 #include "Win32Sleeper.h"
@@ -128,7 +128,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	std::istream *pistr = &std::cin;
 	std::stringstream sstr;
+
+#if __cplusplus >= 201103L
+	std::unique_ptr< std::fstream > pfstr;
+#else
 	std::auto_ptr< std::fstream > pfstr;
+#endif
 
 	for ( int i=1; i<argc; ++i )
 	{
