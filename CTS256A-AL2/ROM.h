@@ -72,9 +72,9 @@ public:
 	}
 
 	// write char
-	virtual uchar write( ushort addr, uchar data )
+	virtual uchar write( ushort /*addr*/, uchar byte )
 	{
-		return data;
+		return byte;
 	}
 
 	// read char

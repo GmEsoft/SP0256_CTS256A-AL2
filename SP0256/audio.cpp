@@ -65,7 +65,6 @@ void outWaveUpdate()
 
 	if ( cyclesAudio_ > 0 )
 	{
-		long curCyclesAudio = cyclesAudio_;
 		long incCyclesAudio = cyclesAudio_ - lastCyclesAudio_;
 		nSamples = cyclesAudio_ / clockspeed_;
 		cyclesAudio_ -= nSamples * clockspeed_;
@@ -127,9 +126,9 @@ void outWaveInit()
 	initWaveOutDevice( AUDIO_FREQ );
 }
 
-void outWaveCycles( ulong cycles_ )
+void outWaveCycles( ulong cycles )
 {
-	cyclesAudio_ += cycles_ * AUDIO_FREQ;
+	cyclesAudio_ += cycles * AUDIO_FREQ;
 }
 
 void outWaveSetClockSpeed( long speed )

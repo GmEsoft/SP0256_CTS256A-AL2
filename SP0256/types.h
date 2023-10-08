@@ -35,6 +35,12 @@ typedef unsigned int uint;
 typedef signed long slong;
 typedef unsigned long ulong;
 
+#if __cplusplus >= 201103L
+
+#include <cstdint>
+
+#else
+
 typedef uchar uint8_t;
 typedef ushort uint16_t;
 typedef uint uint32_t;
@@ -44,3 +50,5 @@ typedef schar int8_t;
 typedef sshort int16_t;
 typedef sint int32_t;
 typedef slong int64_t;
+
+#endif

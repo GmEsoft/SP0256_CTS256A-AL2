@@ -26,7 +26,7 @@
 #include "stdafx.h"
 
 #define NAME	"CTS256A-AL2(tm) Emulator"
-#define VERSION	"v0.0.4-alpha"
+#define VERSION	"v0.0.6-alpha"
 
 #include "ConIOConsole.h"
 #include "CTS256A_AL2.h"
@@ -68,7 +68,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::ostream *postr = &std::cout;
 
 	std::stringstream sstr;
+
+#if __cplusplus >= 201103L
+	std::unique_ptr< std::fstream > pfstr;
+#else
 	std::auto_ptr< std::fstream > pfstr;
+#endif
 	
 	ConIOConsole console;
 	console.puts( NAME " - " VERSION "\n\n" );
@@ -76,7 +81,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	for ( int i=1; i<argc; ++i )
 	{
 		char *s = argv[i];
-		char c = 0;
 
 		if ( opts && *s == '-' )
 		{
@@ -136,6 +140,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			opts = false;
 		}
 	}
+
+	std::cin.sync_with_stdio();
 
 	CTS256A_AL2 system( *pistr, *postr );
 

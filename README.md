@@ -1,9 +1,10 @@
 # SP0256_CTS256A-AL2
-G.I./Microchip SP0256 Speech Processor and CTS256A-AL2 Text-To-Speech Processor Emulation
+
+**G.I./Microchip SP0256 Speech Processor and CTS256A-AL2 Text-To-Speech Processor Emulation**
 
 Based on the IntelliVoice emulator by Joe Zbiciak.
 
-Version 0.0.4-alpha.
+Version 0.0.6-alpha.
 
 A pre-release of the executables (Win32-x86) can be found under 'Releases'.
 
@@ -22,6 +23,9 @@ Two programs:
 They can be combined together (the output from CTS256A-AL2 serves as input for SP0256):
 
 `CTS256A-AL2 -I:README.MD | SP0256 -I-`
+
+This project can currently be built using Microsoft Visual Studio 2005 using the solution file `SP0256_VS2005.sln`,
+or Microsoft Visual Studio 2017 and onwards using the solution file `SP0256.sln`.
 
 
 ## SP0256.EXE

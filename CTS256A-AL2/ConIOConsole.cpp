@@ -28,7 +28,11 @@
 #include <signal.h>
 #include <conio.h>
 
-static void siginthandler (int s)
+#if __cplusplus < 201103L
+#	define noexcept throw()
+#endif
+
+static void siginthandler (int) noexcept
 {
     signal(SIGINT,siginthandler);   // reinstall signal handler
 	_ungetch( 3 );

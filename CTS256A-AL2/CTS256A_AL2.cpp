@@ -48,12 +48,24 @@ static const char * SP0256_labels[] =
 
 uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 {
-	cpu_.trigIRQ( 0x02 ); // trig INT1
+	cpu_.trigIRQ( 0x02 ); // trig INT1 - output interrupt
 
 	if ( !eof_ ) 
 	{
-		if ( !initctr_ && ( bport_ & 0x01 ) )
-			cpu_.trigIRQ( 0x08 ); // trig INT3
+		if ( !initctr_ && ( bport_ & 0x01 ) ) {
+			//if ( !irq3ctr_-- ) {
+			if ( addr == 0xF105 || addr == 0xF11C ) { 
+				// POLL/ENDPOL and output buffer empty
+				if ( cpu_.getdata(7) == cpu_.getdata(9) ) {
+					cpu_.trigIRQ( 0x08 ); // trig INT3 - input interrupt
+					if ( verbose_ )
+						cpu_.printf( " %04x 7:%d 9:%d TRIG\n", addr, cpu_.getdata(7), cpu_.getdata(9) );
+				} else {
+					if ( verbose_ )
+						cpu_.printf( " %04x 7:%d 9:%d NOTRIG\n", addr, cpu_.getdata(7), cpu_.getdata(9) );
+				}
+			}
+		}
 		if ( !--debugctr_ ) {
 			cpu_.setMode( MODE_STOP );
 			debugctr_ = DEBUG_CTR_RELOAD;
@@ -68,13 +80,20 @@ uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 	}
 
 	// 0xF000-0xFFFF: CTS256A-AL2 ROM (in)
+	if ( addr == 0xF33E ) 
+		// patch output buffer high watermark
+		// to force output of each allophone
+		return 0;
+
 	if ( addr >= 0xF000 )
 		return CTS256A_AL2_ROM[addr&0x0FFF];
 
 	// 0x0200-0x0FFF: Parallel data (in)
 	if ( addr < 0x1000 )
 	{
-		uchar c = istr_.get();
+		if ( verbose_ )
+			cpu_.printf( " - avail %d:", istr_.rdbuf()->in_avail() );
+		uchar c = uchar( istr_.get() );
 		if ( eof_ || istr_.eof() )
 		{
 			eof_ = true;
@@ -146,6 +165,7 @@ uchar CTS256A_AL2_Data_InOut::write( ushort addr, uchar data )
 				ostr_ << " " << SP0256_labels[data];
 			else
 				ostr_.put( data | 0x40 );
+			ostr_.flush();
 		}
 
 		if ( initctr_ )
@@ -194,7 +214,6 @@ uchar CTS256A_AL2_Data_InOut::in( ushort addr )
 	default:
 		return 0xFF;
 	}
-	return 0xFF;
 }
 
 uchar CTS256A_AL2_Data_InOut::out( ushort addr, uchar data )
@@ -225,7 +244,6 @@ uchar CTS256A_AL2_Data_InOut::out( ushort addr, uchar data )
 	default:
 		return data;
 	}
-	return data;
 }
 
 void CTS256A_AL2_Data_InOut::setOption( uchar option, uint value )

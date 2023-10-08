@@ -27,7 +27,7 @@
 #include "stdafx.h"
 
 #define NAME	"SP0256(tm) Emulator"
-#define VERSION	"v0.0.4-alpha"
+#define VERSION	"v0.0.6-alpha"
 
 
 #include "Win32Sleeper.h"
@@ -42,6 +42,7 @@
 
 #include <map>
 #include <string>
+#include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -57,7 +58,7 @@ enum model_t
 	_012, _AL2
 };
 
-void help()
+static void help()
 {
 	puts(
 		NAME " - " VERSION "\n\n"
@@ -81,7 +82,7 @@ void help()
 
 // SP0256-AL2 "Narrator" Sample Speech
 // "SP0256-AL2 Narrator"
-int codes_al2[] = { 
+static int codes_al2[] = { 
 	EH, EH, SS, SS, PA2,
 	PP, IY, PA2,
 	ZZ, YR, OW, PA2,
@@ -97,7 +98,15 @@ int codes_al2[] = {
 
 // SP0256-012 "Intellivoice" Sample Speech
 // "Mattel Electronics Presents - Zero Two Five Six - And - Zero One Two"
-int codes_012[] = { 6, 2, 7, 9, 12, 13, 2, 42, 2, 7, 8, 9, -1 };
+static int codes_012[] = { 6, 2, 7, 9, 12, 13, 2, 42, 2, 7, 8, 9, -1 };
+
+
+static std::string toUpperCase( const std::string &str )
+{
+	std::string uStr = str;
+	std::transform( uStr.begin(), uStr.end(), uStr.begin(), ::toupper );
+	return uStr;
+}
 
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -115,16 +124,20 @@ int _tmain(int argc, _TCHAR* argv[])
 	const char* waveFileName = 0;
 
 	int errno_ = 0;
-	const char *fileName;
+	const char *fileName = 0;
 
 	std::istream *pistr = &std::cin;
 	std::stringstream sstr;
+
+#if __cplusplus >= 201103L
+	std::unique_ptr< std::fstream > pfstr;
+#else
 	std::auto_ptr< std::fstream > pfstr;
+#endif
 
 	for ( int i=1; i<argc; ++i )
 	{
 		char *s = argv[i];
-		char c = 0;
 
 		if ( *s == '-' )
 		{
@@ -259,7 +272,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	int nAl2 = 0;
-	size_t al2 = 0, lastal2 = 0, preval2 = 0;
+	int al2 = 0, lastal2 = 0, preval2 = 0; // signed int !!
 	unsigned cnt = 0;
 	int last = 0;
 	int freq = xtal/2/156;
@@ -278,9 +291,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				: 0 ); 
 			++i )
 		{
-			dict[ model==_AL2 ? sp0256_al2::labels[i] 
+			dict[ toUpperCase(
+				  model==_AL2 ? sp0256_al2::labels[i] 
 				: model==_012 ? sp0256_012::labels[i] 
-				: "" ] = i;
+				: "" ) ] = i;
 		}
 	}
 
@@ -301,21 +315,21 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 1;
 	}
 
-	int sample, *al2s;
-	size_t al2max;
-	const char* *sp0256_labels;
+	int sample, *codes = 0;
+	int codemax = 0;
+	const char* *sp0256_labels = 0;
 
 	if ( model == _AL2 )
 	{
-		al2s = codes_al2;
-		al2max = sp0256_al2::nlabels - 1;
+		codes = codes_al2;
+		codemax = sp0256_al2::nlabels - 1;
 		sp0256_labels = sp0256_al2::labels;
 		sp0256_setLabels( sp0256_al2::nlabels, sp0256_al2::labels );
 	} 
 	else if ( model == _012 )
 	{
-		al2s = codes_012;
-		al2max = sp0256_012::nlabels - 1;
+		codes = codes_012;
+		codemax = sp0256_012::nlabels - 1;
 		sp0256_labels = sp0256_012::labels;
 		sp0256_setLabels( sp0256_012::nlabels, sp0256_012::labels );
 	}
@@ -359,11 +373,11 @@ int _tmain(int argc, _TCHAR* argv[])
 					
 					if ( isalnum( c ) )
 					{
-						sym += toupper( c );
+						sym += char( toupper( c ) );
 						const dict_t::const_iterator it = dict.find( sym );
 						if ( it != dict.end() )
 						{
-							al2 = it->second;
+							al2 = int( it->second );
 							break;
 						}
 					}
@@ -382,12 +396,12 @@ int _tmain(int argc, _TCHAR* argv[])
 				break;
 			case 'A':	// Play all sounds/allophones
 				al2 = nAl2++;
-				if ( al2 > al2max )
+				if ( al2 > codemax )
 					eos = 1;
 				break;
 			case 'D':	// Demo mode, play sample speech
 			default:
-				al2 = al2s[nAl2++];
+				al2 = codes[nAl2++];
 				if ( al2 < 0 )
 					eos = 1;
 				break;
@@ -433,7 +447,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 		else
 		{
-			outWave( sample, sample );
+			outWave( uchar( sample ), uchar( sample ) );
 			systemClock.runCycles( 1000 );
 			outWaveCycles( 1 );
 		}
@@ -454,6 +468,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf( "xtal=%d - freq=%d\n", xtal, freq );
 		printf( "numSamples=%d - time=%8.4f s - minSample=%d - maxSample=%d - samplesMask=0x%X\n", cnt, cnt*1./freq, minSample, maxSample, bitsSample );
 		puts( "Finished." );
+#if _DEBUG
+		printf( "[__cplusplus=%ldL]\n", __cplusplus );
+#endif
 	}
 
 	_flushall(); // seems needed when redirecting stdout to file ...

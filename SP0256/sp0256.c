@@ -218,14 +218,14 @@ static int lpc12_update(lpc12_t *f, int num_samp, int16_t *out, uint32_t *optr)
 			--f->rpt;
 
             f->cnt = f->per ? f->per : PER_NOISE;
-            samp   = f->amp;
+            samp   = (int16_t)(f->amp);
             do_int = f->interp;
         }
 
 		--f->cnt;
 
         if (!f->per)
-            samp   = bit ? -f->amp : f->amp;
+            samp   = (int16_t)( bit ? -f->amp : f->amp );
 
         /* ---------------------------------------------------------------- */
         /*  If we need to, process the interpolation registers.             */
@@ -805,8 +805,8 @@ static void sp0256_micro(ivoice_t *iv)
         /*  Fetch the first 8 bits of the opcode, which are always in the   */
         /*  same approximate format -- immed4 followed by opcode.           */
         /* ---------------------------------------------------------------- */
-        immed4 = sp0256_getb(iv, 4);
-        opcode = sp0256_getb(iv, 4);
+        immed4 = (uint8_t)sp0256_getb(iv, 4);
+        opcode = (uint8_t)sp0256_getb(iv, 4);
         repeat = 0;
         ctrl_xfer = 0;
 
@@ -1042,7 +1042,7 @@ static void sp0256_micro(ivoice_t *iv)
             /* ------------------------------------------------------------ */
             if (len)
             {
-                value = sp0256_getb(iv, len);
+                value = (int8_t)sp0256_getb(iv, len);
             }
             else
             {
@@ -1312,16 +1312,19 @@ int sp0256_halted()
 	return intellivoice.halted;
 }
 
-void sp0256_sendCommand( unsigned cmd )
+void sp0256_sendCommand( uint32_t cmd )
 {
 	ivoice_wr( 0, cmd );
 }
 
+
+/*
 int sp0256_isNextSample()
 {
     ivoice_t *ivoice = &intellivoice;
 	return 0;
 }
+*/
 
 int sp0256_getNextSample()
 {

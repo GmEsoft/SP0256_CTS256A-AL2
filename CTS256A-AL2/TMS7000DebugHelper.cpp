@@ -49,15 +49,15 @@ void TMS7000DebugHelper::printRegsLine( Console_I &console )
 		);
 }
 
-void TMS7000DebugHelper::printSource( Console_I &console, uint &pc )
+void TMS7000DebugHelper::printSource( Console_I &console, uint &_pc )
 {
-	uint nextpc = pc;
+	uint nextpc = _pc;
 	const char *src = getSource( nextpc );
 
-	console.printf( "%04X ", pc );
+	console.printf( "%04X ", _pc );
 	int i = 0;
-	for ( ; pc < nextpc; ++pc, ++i )
-		console.printf( "%02X", getSourceByte( pc ) );
+	for ( ; _pc < nextpc; ++_pc, ++i )
+		console.printf( "%02X", getSourceByte( _pc ) );
 	for ( ; i < 4; ++i )
 		console.printf( "  " );
 	console.printf( " %.22s", src );
@@ -77,57 +77,59 @@ static uchar s_getData( ushort addr )
 	return 0xFF;
 }
 
-const char *TMS7000DebugHelper::getSource( uint &pc )
+const char *TMS7000DebugHelper::getSource( uint &_pc )
 {
 	static char src[80];
 	s_pCpu = &cpu_;
 	setTms7000MemIO( s_getData );
-	disass_.setPC( pc );
+	disass_.setPC( _pc );
 	strcpy( src, disass_.source() );
-	pc = disass_.getPC();
+	_pc = disass_.getPC();
 	for ( size_t i=6; i<strlen( src )-2; ++i )
 		src[i] = src[i+2];
 	return src;
 }
 
-uchar TMS7000DebugHelper::getSourceByte( uint pc )
+uchar TMS7000DebugHelper::getSourceByte( uint _pc )
 {
-	return cpu_.getdata( pc );
+	return cpu_.getdata( ushort( _pc ) );
 }
 
-const char *TMS7000DebugHelper::getPointer( int n, uint &ptr )
+const char *TMS7000DebugHelper::getPointer( int /*n*/, uint &ptr )
 {
 	ptr = 0;
 	return 0;
 }
 
-bool TMS7000DebugHelper::isCall( uint pc )
+bool TMS7000DebugHelper::isCall( uint _pc )
 {
-	uchar x = cpu_.getcode( pc );
-	return	(	x == 0x12							// LCALL nnnn
-			||	( x & 0x1F ) == 0x11				// ACALL nnnn
+	uchar x = cpu_.getcode( ushort( _pc ) );
+	return	(	x == 0x8E							// CALL nnnn
+			||	x == 0x9E							// CALL @Rn
+			||	x == 0xAE							// CALL nnnn(B)
+			||	x >= 0xE8							// TRAP nn
 			);
 }
 
-bool TMS7000DebugHelper::isRet( uint pc )
+bool TMS7000DebugHelper::isRet( uint _pc )
 {
-	uchar x = cpu_.getcode( pc );
+	uchar x = cpu_.getcode( ushort( _pc ) );
 	return	(	x == 0x22							// RET
 			||	x == 0x32							// RETI
 			);
 }
 
-bool TMS7000DebugHelper::isSetSP( uint pc )
+bool TMS7000DebugHelper::isSetSP( uint /*pc*/ )
 {
 	return false;
 }
 
-bool TMS7000DebugHelper::isBreak( uint pc )
+bool TMS7000DebugHelper::isBreak( uint /*pc*/ )
 {
 	return false;
 }
 
-bool TMS7000DebugHelper::isBreakRet( uint lastpc, uint retsp )
+bool TMS7000DebugHelper::isBreakRet( uint /*lastpc*/, uint /*retsp*/ )
 {
 	return false;
 }

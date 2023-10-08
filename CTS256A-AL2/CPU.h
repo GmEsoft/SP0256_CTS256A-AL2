@@ -46,7 +46,7 @@ public:
 	// set PC
 	void setPC( uint pc )
 	{
-		pc_ = pc;
+		pc_ = ushort(pc);
 	}
 
 	// get PC

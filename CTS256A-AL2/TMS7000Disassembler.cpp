@@ -63,7 +63,7 @@ const char *TMS7000Disassembler::getladdr()
 }
 
 // fetch absolute segment external address and return it as hex string or as label
-const char *TMS7000Disassembler::getaaddr( char opcode )
+const char *TMS7000Disassembler::getaaddr( char /*opcode*/ )
 {
 	return "";
 }
@@ -75,19 +75,19 @@ const char *TMS7000Disassembler::getsaddr()
 }
 
 // return operand name or value
-const char *TMS7000Disassembler::getoperand( int opn )
+const char *TMS7000Disassembler::getoperand( int /*opn*/ )
 {
 	return "";//getOperand();
 }
 
 // get 1st operand name or value
-const char *TMS7000Disassembler::getoperand1( int opcode )
+const char *TMS7000Disassembler::getoperand1( int /*opcode*/ )
 {
 	return "";//getOperand();
 }
 
 // get 2nd operand name or value
-const char *TMS7000Disassembler::getoperand2( int opcode )
+const char *TMS7000Disassembler::getoperand2( int /*opcode*/ )
 {
 	return "";//getOperand();
 }
