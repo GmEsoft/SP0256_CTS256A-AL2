@@ -35,7 +35,7 @@ typedef unsigned int uint;
 typedef signed long slong;
 typedef unsigned long ulong;
 
-#if __cplusplus >= 199711L
+#if __cplusplus >= 201103L
 
 #include <cstdint>
 

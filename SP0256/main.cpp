@@ -372,7 +372,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						const dict_t::const_iterator it = dict.find( sym );
 						if ( it != dict.end() )
 						{
-							al2 = it->second;
+							al2 = int( it->second );
 							break;
 						}
 					}
@@ -463,6 +463,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf( "xtal=%d - freq=%d\n", xtal, freq );
 		printf( "numSamples=%d - time=%8.4f s - minSample=%d - maxSample=%d - samplesMask=0x%X\n", cnt, cnt*1./freq, minSample, maxSample, bitsSample );
 		puts( "Finished." );
+#if _DEBUG
+		printf( "[__cplusplus=%ldL]\n", __cplusplus );
+#endif
 	}
 
 	_flushall(); // seems needed when redirecting stdout to file ...
