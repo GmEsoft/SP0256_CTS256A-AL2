@@ -18,8 +18,28 @@ A pre-release of the executables (Win32-x86) can be found under 'Releases'.
 - convert the input chars to upper case to circumvent a defect in the ROM related to the lower case chars handling.
 
 ### v0.0.6-alpha
-- converted code-to-speech rules to text using macros to encode them;
-- splitted the source code into separate parts.
+- Migrated to Visual Studio 2017 => new solution file `SP0256_VS2005.sln` for compatibility with VS2005
+  - Use `SP0256_VS2005.sln` to build under VS2005;
+  - Use `SP0256.sln` to build under VS2017 (or higher -- to check).
+
+### v0.0.5-alpha
+- CTS256A_AL2: force output of each allophone as soon as possible;
+- SP0256: input labels are case-insensitive.
+
+### v0.0.4-alpha
+- added GPL3 headers;
+- solved compiler warnings;
+- updated README.md .
+
+### v0.0.3-alpha
+- SP0256: `-w[wavFreq]:file.wav`;
+- SP0256: `-DT` = trace; `-DD` = single-step debug, `-DS` = samples;
+- CTS256A-AL2: updated debugger help text;
+- CTS256A-AL2: code clean-up.
+
+
+### v0.0.1-alpha
+- Initial commit
 
 
 ## Description
@@ -154,6 +174,13 @@ Example: `echo Hello World. | CTS256A-AL2.exe -n | SP0256.exe -i-`
 
 ## Useful links
 
+### CTS256A-AL2
+
+Data Sheet: http://bitsavers.informatik.uni-stuttgart.de/components/gi/speech/General_Instrument_-_AN-0505D_-_CTS256A-AL2_Code-to-Speech_Chipset_-_10Dec1986.pdf
+
+Binary ROM image: https://github.com/palazzol/TMS7xxx_dumper/blob/main/software/dumps/cts256a.bin
+from the GitHub project: https://github.com/palazzol/TMS7xxx_dumper
+
 ### SP0256-AL2 ROM Image
 
 http://spatula-city.org/~im14u2c/sp0256-al2/
@@ -217,3 +244,6 @@ Microchip retains the intellectual property rights to the algorithms and data th
 ## Credits
 
 Joe Zbiciak, author of the Intellivoice emulator in C language, which this SP0256 emulator is based on.
+
+Frank Palazzolo, who designed an extractor to dump the masked ROMs of TMS7000-based devices, and published
+the ROM binary image `cts256a.bin`.
