@@ -26,7 +26,7 @@
 #include "stdafx.h"
 
 #define NAME	"CTS256A-AL2(tm) Emulator"
-#define VERSION	"v0.0.6-alpha"
+#define VERSION	"v0.1.0-alpha"
 
 #include "ConIOConsole.h"
 #include "CTS256A_AL2.h"
@@ -50,6 +50,7 @@ void help()
 		" -b        Select binary output (range 40..7F)\n"
 		" -e        Echo input text\n"
 		" -v        Verbose mode\n"
+		" -r        Rules debugging mode\n"
 		" -d        Debug mode\n"
 		" -n        Suppress 'O.K.'\n"
 		" --        Stop parsing options\n"
@@ -62,7 +63,7 @@ void help()
 int _tmain(int argc, _TCHAR* argv[])
 {
 	char mode = 'T';
-	bool echo = false, debug = false, verbose = false, noOK = false, opts = true;
+	bool echo = false, debug = false, debug_rules = false, verbose = false, noOK = false, opts = true;
 
 	std::istream *pistr = &std::cin;
 	std::ostream *postr = &std::cout;
@@ -114,6 +115,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 'D': // Debug
 				debug = 1;
 				break;
+			case 'R': // Debug CTS rules
+				debug_rules = 1;
+				break;
 			case 'V': // Verbose
 				verbose = 1;
 				break;
@@ -148,6 +152,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	system.setOption( 'D', debug );
 	system.setOption( 'E', echo );
 	system.setOption( 'V', verbose );
+	system.setOption( 'R', debug_rules );
 	system.setOption( 'N', noOK );
 	system.setOption( 'M', mode );
 

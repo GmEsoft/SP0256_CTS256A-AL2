@@ -87,13 +87,14 @@ static void showHelp( Console_I &con )
 		"\n X = Exec until RET"
 		"\n S = Show next lines of disassembly"
 		"\n R = Show reg names"
-		"\n M = Registers indirect dump"
+//		"\n M = Registers indirect dump"
 		"\n H = Hex dump current page"
 		"\n ; = Hex dump next page"
 		"\n - = Hex dump prev page"
 		"\n . = Hex dump 16 pages forward"
 		"\n _ = Hex dump 16 pages backward"
 		"\n F = Font set"
+		"\n Sh-F10 to exit"
 		);
 }
 
