@@ -45,6 +45,35 @@ static const char * SP0256_labels[] =
 	"NN2",	"HH2",	"OR",	"AR",	"YR",	"GG2",	"EL",	"BB2"
 };
 
+/* Patterns:
+#	09	One or more vowels
+.	0A	Voiced consonant: B D G J L M N R V W X
+%	0B	Suffix: -ER(S) -E -ES -ED -ELY -ING -OR -MENT
+&	0C	Sibilant: S C G Z X J CH SH
+@	0D	T S R D L Z N J TH CH SH preceding long U
+^	0E	One consonant
++	0F	Front vowel: E I Y
+:	10	Zero or more consonants
+*	11	One or more consonants
+>	12	Back vowel: O U
+<	13	Anything other than a letter
+?	14	Two or more vowels
+$	1F	Not a pattern symbol, ignored by the ROM
+		Should probably be a D: [I]D% = [AY] instead of [I]$% = [AY]
+*/
+
+static const char symbols[] =
+{
+	 0,		 0,		 0,		 0,		 0,		 0,		 0,		'\'',	// 00-07
+	 0,		'#',	'.',	'%',	'&',	'@',	'^',	'+',	// 08-0F
+	':',	'*',	'>',	'<',	'?',	 0,		 0,		 0,		// 10-17
+	 0,		 0,		 0,		 0,		 0,		 0,		 0,		'$',	// 18-1F
+	 0,		'A',	'B',	'C',	'D',	'E',	'F',	'G',	// 20-27
+	'H',	'I',	'J',	'K',	'L',	'M',	'N',	'O',	// 28-2F
+	'P',	'Q',	'R',	'S',	'T',	'U',	'V',	'W',	// 30-37
+	'X',	'Y',	'Z',	 0,		 0,		 0,		 0,		 0		// 38-3F
+};
+
 
 uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 {
@@ -54,7 +83,7 @@ uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 	{
 		if ( !initctr_ && ( bport_ & 0x01 ) ) {
 			//if ( !irq3ctr_-- ) {
-			if ( addr == 0xF105 || addr == 0xF11C ) { 
+			if ( addr == 0xF105 || addr == 0xF10C || addr == 0xF11C || addr == 0xF12F ) { 
 				// POLL/ENDPOL and output buffer empty
 				if ( cpu_.getdata(7) == cpu_.getdata(9) ) {
 					cpu_.trigIRQ( 0x08 ); // trig INT3 - input interrupt
@@ -85,6 +114,22 @@ uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 		// to force output of each allophone
 		return 0;
 
+	if ( debug_rules_ )
+	{
+		if ( addr == 0xF406 )
+		{
+			// after CALL @SELRUL
+			// got the initial in the accumulator
+			initial_ = cpu_.read( 0 );
+		}
+		else if ( addr == 0xF441 )
+		{
+			// after BTJO %>10,R10,LF47A 
+			// found matching rule in R20:R21
+			debug_rule();
+		}
+	}		
+
 	if ( addr >= 0xF000 )
 		return CTS256A_AL2_ROM[addr&0x0FFF];
 
@@ -93,7 +138,7 @@ uchar CTS256A_AL2_Data_InOut::read( ushort addr )
 	{
 		if ( verbose_ )
 			cpu_.printf( " - avail %d:", istr_.rdbuf()->in_avail() );
-		uchar c = uchar( istr_.get() );
+		uchar c = uchar( toupper( istr_.get() ) );
 		if ( eof_ || istr_.eof() )
 		{
 			eof_ = true;
@@ -200,7 +245,7 @@ uchar CTS256A_AL2_Data_InOut::in( ushort addr )
 		// 2 (04)	m0 +	000:paral  - 001:50bd   - 010:110bd
 		// 1 (02)	m1 |==> 011:300bd  - 100:1200bd - 101:2400bd
 		// 0 (01)	m2 +    110:4800bd - 111:9600bd
-		return 0x90;
+		return 0x10;
 	case 0x06:	// BPORT	(out) Port B data := xxxx xxxI (DSR/BUSY)
 		// 7 (80)	CLKOUT
 		// 6 (40)	ENABLE*
@@ -256,6 +301,9 @@ void CTS256A_AL2_Data_InOut::setOption( uchar option, uint value )
 	case 'D':
 		debug_ = value != 0;
 		break;
+	case 'R':
+		debug_rules_ = value != 0;
+		break;
 	case 'V':
 		verbose_ = value != 0;
 		break;
@@ -278,6 +326,8 @@ uint CTS256A_AL2_Data_InOut::getOption( uchar option )
 		return echo_;
 	case 'D':
 		return debug_;
+	case 'R':
+		return debug_rules_;
 	case 'V':
 		return verbose_;
 	case 'N':
@@ -290,6 +340,79 @@ uint CTS256A_AL2_Data_InOut::getOption( uchar option )
 	}
 }
 
+void CTS256A_AL2_Data_InOut::debug_rule()
+{
+
+	ushort addr = ( cpu_.read( 20 ) << 8 ) + cpu_.read( 21 );
+
+	bool first = true;
+	bool allo = false;
+	bool bracket = false;
+	uchar c0 = initial_;
+
+	while ( true )
+	{
+		if ( first ) {
+			first = 0;
+			cpu_.printf( "%04X:\t", addr );
+		}
+
+		uchar c = cpu_.read( addr++ );
+
+		// Opening bracket ?
+		if ( c & 0x40 ) {
+			if ( allo ) {
+				cpu_.puts( " = " );
+			}
+			cpu_.putch( '[' );
+			if ( !allo && c0 >= 'A' )
+			{
+				cpu_.putch( c0 );
+			}
+			bracket = true;
+		}
+
+		uchar ch = c & 0x3F;
+
+		if ( !bracket )
+		{
+			uchar s = symbols[ch]; 
+			// pattern outside brackets: use symbols table
+			if ( s  )
+				cpu_.putch( s );
+			else
+				cpu_.printf( "{%02X}", ch );
+		}
+		else if ( allo )
+		{
+			// allophones inside brackets
+			if ( c != 0xFF )
+			{
+				cpu_.puts( SP0256_labels[ch] );
+				if ( !( c & 0x80 ) )
+					cpu_.putch( ' ' );
+			}
+		}
+		else
+		{
+			// pattern inside brackets
+			if ( c != 0xFF )
+				cpu_.putch( ch + 0x20  );
+		}
+
+		// Closing bracket ?
+		if ( c & 0x80 ) {
+			cpu_.putch( ']' );
+			if ( allo ) {
+				cpu_.putch( '\n' );
+				break; // done. Exit loop
+			}
+			allo = !allo;
+			bracket = 0;
+		}
+	}
+
+}
 
 void CTS256A_AL2::run()
 {

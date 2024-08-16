@@ -9,6 +9,19 @@ Version 0.0.6-alpha.
 A pre-release of the executables (Win32-x86) can be found under 'Releases'.
 
 
+## History
+
+### CTS256A-AL2 v0.1.0-alpha
+- added rules debugging mode `-r`;
+- use 'external' RAM for buffers;
+- fixed an issue with the idle loops handling;
+- convert the input chars to upper case to circumvent a defect in the ROM related to the lower case chars handling.
+
+### v0.0.6-alpha
+- converted code-to-speech rules to text using macros to encode them;
+- splitted the source code into separate parts.
+
+
 ## Description
 
 Two emulators in this project:

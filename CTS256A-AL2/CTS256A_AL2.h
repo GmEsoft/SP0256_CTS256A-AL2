@@ -49,7 +49,7 @@ class CTS256A_AL2_Data_InOut
 public:
 	CTS256A_AL2_Data_InOut( TMS7000CPU &cpu, std::istream &istr, std::ostream &ostr )
 		: cpu_( cpu ), istr_( istr ), ostr_( ostr ), bport_( 0 ), initctr_( 6 ), irq3ctr_( 0 ), eof_( false )
-		, debug_( false ), verbose_( false ), echo_( false ), noOK_( false ), mode_( 'T' ), debugctr_( DEBUG_CTR_RELOAD )
+		, debug_( false ), debug_rules_( false ), verbose_( false ), echo_( false ), noOK_( false ), mode_( 'T' ), debugctr_( DEBUG_CTR_RELOAD )
 	{
 		memset( ram_, 0, 0x800 );
 	}
@@ -83,6 +83,8 @@ public:
 
 	uint getOption( uchar option );
 
+	void debug_rule();
+
 private:
 	uchar					bport_;
 	TMS7000CPU				&cpu_;
@@ -95,11 +97,13 @@ private:
 	uint					eofctr_;
 	bool					eof_;
 	bool					debug_;
+	bool					debug_rules_;
 	bool					verbose_;
 	bool					echo_;
 	bool					textMode_;
 	bool					noOK_;
 	char					mode_;
+	char					initial_;
 };
 
 
