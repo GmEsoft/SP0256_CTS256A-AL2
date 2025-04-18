@@ -47,8 +47,6 @@ static unsigned audioCurrentBufferPos_ = 0;
 static uchar	audioCurrentLevelL_ = 0x80;
 static uchar	audioCurrentLevelR_ = 0x80;
 static long		cyclesAudio_ = 0;
-static long		lastCyclesAudio_ = 0;
-static long		cycles_ = 0;
 static long		clockspeed_ = 10000;		// Clock speed in Hz
 
 void outWaveUpdate()
@@ -57,6 +55,7 @@ void outWaveUpdate()
 
 	static uchar audioLastLevelL = 0x80;
 	static uchar audioLastLevelR = 0x80;
+	static long	lastCyclesAudio_ = 0;
 
 #ifdef AUDIO_FILTER
 	static uchar levelL = 0x80;

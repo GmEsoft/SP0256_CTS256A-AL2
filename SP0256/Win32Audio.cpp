@@ -39,7 +39,7 @@ static long WaveBuffersCounter = 0;
 static HWAVEOUT		hWaveOut;
 static WAVEFORMATEX	waveform;
 
-std::deque< PWAVEHDR > WaveHdrsToDelete;
+std::deque< LPWAVEHDR > WaveHdrsToDelete;
 
 static CRITICAL_SECTION* pCriticalSection = NULL;
 
@@ -90,16 +90,16 @@ MMRESULT MMErrorBox( MMRESULT errCode, char* context = NULL )
 	return errCode;
 }
 
-void CALLBACK waveOutProc(HWAVEOUT waveOut, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2)
+void CALLBACK waveOutProc(HWAVEOUT waveOut, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 {
 	/* Has a buffer finished playing? */
 	if ( uMsg == MM_WOM_DONE )
 	{
 #pragma warning(suppress:4312)
-		PWAVEHDR pWaveHdr = (PWAVEHDR)dwParam1;
+		LPWAVEHDR lpWaveHdr = (LPWAVEHDR)dwParam1;
 
 		EnterCriticalSection( pCriticalSection );
-		WaveHdrsToDelete.push_back( pWaveHdr );
+		WaveHdrsToDelete.push_back( lpWaveHdr );
 		LeaveCriticalSection( pCriticalSection );
 
 		--WaveBuffersQueued;
@@ -109,16 +109,16 @@ void CALLBACK waveOutProc(HWAVEOUT waveOut, UINT uMsg, DWORD dwInstance, DWORD d
 
 CFUNC void cleanWaveBufferQueue()
 {
-	PWAVEHDR pWaveHdr;
+	LPWAVEHDR lpWaveHdr;
 
 	EnterCriticalSection( pCriticalSection );
 
 	while ( !WaveHdrsToDelete.empty() )
 	{
-		pWaveHdr = WaveHdrsToDelete.front();
+		lpWaveHdr = WaveHdrsToDelete.front();
 		WaveHdrsToDelete.pop_front();
-		MMErrorBox( waveOutUnprepareHeader( hWaveOut, pWaveHdr, sizeof( WAVEHDR ) ), "cleanWaveBufferQueue/waveOutUnprepareHeader" );
-		delete pWaveHdr;
+		MMErrorBox( waveOutUnprepareHeader( hWaveOut, lpWaveHdr, sizeof( WAVEHDR ) ), "cleanWaveBufferQueue/waveOutUnprepareHeader" );
+		delete lpWaveHdr;
 	}
 
 	LeaveCriticalSection( pCriticalSection );
@@ -126,7 +126,7 @@ CFUNC void cleanWaveBufferQueue()
 
 CFUNC void queueWaveBuffer( unsigned char* Buffer, unsigned long BufSize )
 {
-	PWAVEHDR pWaveHdr = new WAVEHDR;
+	LPWAVEHDR lpWaveHdr = new WAVEHDR;
 
 	cleanWaveBufferQueue();
 
@@ -138,14 +138,14 @@ CFUNC void queueWaveBuffer( unsigned char* Buffer, unsigned long BufSize )
 		else if ( WaveBuffersQueued == 1 )
 			MMErrorBox( waveOutRestart( hWaveOut ), "queueWaveBuffer/waveOutRestart" );
 
-		ZeroMemory( pWaveHdr, sizeof( WAVEHDR ) );
+		ZeroMemory( lpWaveHdr, sizeof( WAVEHDR ) );
 
-		pWaveHdr->lpData = (LPSTR)Buffer;
-		pWaveHdr->dwBufferLength = BufSize;
+		lpWaveHdr->lpData = (LPSTR)Buffer;
+		lpWaveHdr->dwBufferLength = BufSize;
 
-		MMErrorBox( waveOutPrepareHeader( hWaveOut, pWaveHdr, sizeof( WAVEHDR ) ), "queueWaveBuffer/waveOutPrepareHeader" );
+		MMErrorBox( waveOutPrepareHeader( hWaveOut, lpWaveHdr, sizeof( WAVEHDR ) ), "queueWaveBuffer/waveOutPrepareHeader" );
 
-		MMErrorBox( waveOutWrite( hWaveOut, pWaveHdr, sizeof( WAVEHDR ) ), "queueWaveBuffer/waveOutWrite"  );
+		MMErrorBox( waveOutWrite( hWaveOut, lpWaveHdr, sizeof( WAVEHDR ) ), "queueWaveBuffer/waveOutWrite"  );
 
 		++WaveBuffersQueued;
 	}
@@ -198,7 +198,7 @@ CFUNC void initWaveOutDevice( unsigned long WaveFreq )
 	waveform.wBitsPerSample = 8;			/* number of bits per sample of mono data */
 
 #pragma warning(suppress:4311)
-	MMErrorBox( waveOutOpen( &hWaveOut, WAVE_MAPPER, &waveform, (DWORD)waveOutProc, 0, CALLBACK_FUNCTION ), "initWaveOutDevice/waveOutOpen" );
+	MMErrorBox( waveOutOpen( &hWaveOut, WAVE_MAPPER, &waveform, (DWORD_PTR)waveOutProc, 0, CALLBACK_FUNCTION ), "initWaveOutDevice/waveOutOpen" );
 
 	WaveDeviceInitialized = true;
 }
