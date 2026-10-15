@@ -11,6 +11,9 @@ A pre-release of the executables (Win32-x86) can be found under 'Releases'.
 
 ## History
 
+### SP0256 v0.1.0-alpha
+- fix deadlock after the first utterance: an ALD written to a halted chip is never picked up. (thanks Michael Wessel)
+
 ### CTS256A-AL2 v0.1.0-alpha
 - added rules debugging mode `-r`;
 - use 'external' RAM for buffers;
@@ -68,7 +71,7 @@ or Microsoft Visual Studio 2017 and onwards using the solution file `SP0256.sln`
 **GI/Microchip SP0256-AL2 Narrator(tm) and SP0256-012 Intellivoice(tm) Speech Processor**
 
 
-This program accurately emulates the SP0256 micro-sequencer and the voice generator, using the embedded 
+This program accurately emulates the SP0256 micro-sequencer and the voice generator, using the embedded
 original speech ROM images. The voice generator consists of a glottal pulse and noise generator, and
 a 12-pole digital filter.
 
@@ -82,8 +85,8 @@ speech ROM.
 
 
 The input can either be stdin or a file. Specify `-i-` to use stdin, or `-iFilename` to use an input file.
-The format can either be ASCII (the allophone or pause labels for AL2, or the speech words for 012), 
-or binary (6-bit addresses - the higher bits are masked out). Specify `-t` for ASCII text mode (the default), 
+The format can either be ASCII (the allophone or pause labels for AL2, or the speech words for 012),
+or binary (6-bit addresses - the higher bits are masked out). Specify `-t` for ASCII text mode (the default),
 or `-b` for binary mode.
 
 
@@ -95,7 +98,7 @@ The XTAL frequency can also be specified via the option `-xXtal`, where 1000000 
 value for Xtal is 3120000 (3.12 MHz).
 
 The audio sampling frequency is given by the expression `Freq = Xtal / 312`. So, for the default Xtal frequency of 3.12 MHz,
-the audio sampling frequency will be 10 kHz. This audio sampling frequency will be the default frequency for the .WAV 
+the audio sampling frequency will be 10 kHz. This audio sampling frequency will be the default frequency for the .WAV
 file if no other value is specified via the `-w` option.
 
 Some echo/verbose/debugging flags are provided:
@@ -131,16 +134,16 @@ sp0256 [-m{AL2|012}] [-e] [-v] [-xClockFreq] [ -t | -b | -a ] [ -i{inFile|-} ] [
 **GI/Microchip CTS256A-AL2(tm) Code-To-Speech Speech Processor**
 
 
-This program accurately emulates the CTS256A-AL2 companion chip of the SP0256-AL2 speech processor, 
+This program accurately emulates the CTS256A-AL2 companion chip of the SP0256-AL2 speech processor,
 using the embedded original code-to-speech ROM image.
 
 
-The input can either be stdin, or a file, or the command line. Specify `-i-` to use stdin, `-iFilename` to use 
+The input can either be stdin, or a file, or the command line. Specify `-i-` to use stdin, `-iFilename` to use
 an input file, or put the text at the end of the command line, after the options.
 
 
 The output is stdout. It can be piped to SP0256.exe in order to directly pronounce the allophones converted from
-the input text. The format can either be ASCII (the allophone or pause labels), or binary (6-bit addresses OR-ed 
+the input text. The format can either be ASCII (the allophone or pause labels), or binary (6-bit addresses OR-ed
 with 0x40). Specify `-t` for ASCII text mode (the default), or `-b` for binary mode.
 
 

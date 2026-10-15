@@ -27,8 +27,7 @@
 #include "stdafx.h"
 
 #define NAME	"SP0256(tm) Emulator"
-#define VERSION	"v0.0.6-alpha"
-
+#define VERSION	"v0.1.0-alpha"
 
 #include "Win32Sleeper.h"
 #include "SystemClock.h"
