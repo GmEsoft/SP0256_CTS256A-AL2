@@ -30,10 +30,6 @@
 
 #include "ConIOConsole.h"
 #include "CTS256A_AL2.h"
-#include "ConsoleDebugger.h"
-#include "TMS7000CPU.h"
-#include "TMS7000DebugHelper.h"
-#include "TMS7000Disassembler.h"
 
 #include <sstream>
 #include <fstream>
