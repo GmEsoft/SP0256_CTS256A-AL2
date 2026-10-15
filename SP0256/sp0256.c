@@ -1197,6 +1197,23 @@ void ivoice_wr(uint32_t addr, uint32_t data)
         ivoice->lrq = 0;
         ivoice->ald = (0xFF & data) << 4;
 
+        /* ---------------------------------------------------------------- */
+        /*  Leave the rest state.  When the chip runs out of allophones,    */
+        /*  sp0256_micro()'s HALT branch parks it with filt.rpt = 1, and    */
+        /*  sp0256_getNextSample() returns early whenever `halted` is set   */
+        /*  without running the filter -- so nothing decrements rpt again.  */
+        /*  micro() is gated on rpt <= 0 && cnt <= 0, so it is never        */
+        /*  re-entered, and this ALD can never be picked up: lrq stays 0    */
+        /*  and the chip deadlocks with a command pending.                  */
+        /*                                                                  */
+        /*  Writing the ALD of a halted SP0256 starts it, so clearing the   */
+        /*  rest counter here is what the real part does.  Scoped to        */
+        /*  exactly the rest state, so a pipelined write during speech --   */
+        /*  the normal case -- is untouched.                                */
+        /* ---------------------------------------------------------------- */
+        if (ivoice->halted && ivoice->filt.cnt <= 0)
+            ivoice->filt.rpt = 0;
+
         return;
     }
 
