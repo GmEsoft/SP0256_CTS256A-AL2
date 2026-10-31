@@ -1,4 +1,5 @@
-# SP0256_CTS256A-AL2
+[SP0256_CTS256A-AL2](https://github.com/GmEsoft/SP0256_CTS256A-AL2)
+===================================================================
 
 **G.I./Microchip SP0256 Speech Processor and CTS256A-AL2 Text-To-Speech Processor Emulation**
 
@@ -9,7 +10,8 @@ Version 0.0.6-alpha.
 A pre-release of the executables (Win32-x86) can be found under 'Releases'.
 
 
-## History
+History
+-------
 
 ### SP0256 v0.1.0-alpha
 - fix deadlock after the first utterance: an ALD written to a halted chip is never picked up. (thanks Michael Wessel)
@@ -45,7 +47,8 @@ A pre-release of the executables (Win32-x86) can be found under 'Releases'.
 - Initial commit
 
 
-## Description
+Description
+-----------
 
 Two emulators in this project:
 - SP0256 Speech Processor, generating audio speech from allophones (-AL2: Narrator<sup>TM</sup>) or words (-012 Intellivoice<sup>TM</sup>);
@@ -60,46 +63,35 @@ They can be combined together (the output from CTS256A-AL2 serves as input for S
 
 `CTS256A-AL2 -I:README.MD | SP0256 -I-`
 
-This project can currently be built using Microsoft Visual Studio 2005 using the solution file `SP0256_VS2005.sln`,
-or Microsoft Visual Studio 2017 and onwards using the solution file `SP0256.sln`.
+This project can currently be built using Microsoft Visual Studio 2005 using the solution file `SP0256_VS2005.sln`, or Microsoft Visual Studio 2017 and onwards using the solution file `SP0256.sln`.
 
 
-## SP0256.EXE
+SP0256.EXE
+----------
 
 **SP0256(tm) Emulator**
 
 **GI/Microchip SP0256-AL2 Narrator(tm) and SP0256-012 Intellivoice(tm) Speech Processor**
 
 
-This program accurately emulates the SP0256 micro-sequencer and the voice generator, using the embedded
-original speech ROM images. The voice generator consists of a glottal pulse and noise generator, and
-a 12-pole digital filter.
+This program accurately emulates the SP0256 micro-sequencer and the voice generator, using the embedded original speech ROM images. The voice generator consists of a glottal pulse and noise generator, and a 12-pole digital filter.
 
 
 Two versions of the speech ROM are included:
 - AL2 = the Narrator(tm) version, with 5 pauses and 59 allophones;
 - 012 = the version included in the IntelliVoice cartridge for the IntelliVision game console.
 
-Specify `-mAL2` (default) to select the AL2 Narrator(tm) speech ROM, or `-m012` to select the IntelliVoice
-speech ROM.
+Specify `-mAL2` (default) to select the AL2 Narrator(tm) speech ROM, or `-m012` to select the IntelliVoice speech ROM.
 
 
-The input can either be stdin or a file. Specify `-i-` to use stdin, or `-iFilename` to use an input file.
-The format can either be ASCII (the allophone or pause labels for AL2, or the speech words for 012),
-or binary (6-bit addresses - the higher bits are masked out). Specify `-t` for ASCII text mode (the default),
-or `-b` for binary mode.
+The input can either be stdin or a file. Specify `-i-` to use stdin, or `-iFilename` to use an input file. The format can either be ASCII (the allophone or pause labels for AL2, or the speech words for 012), or binary (6-bit addresses - the higher bits are masked out). Specify `-t` for ASCII text mode (the default), or `-b` for binary mode.
 
 
-The output can either be the default sound output device, or a .WAV file. Specify `-wWavFile` to write the audio
-stream to WavFile. Specify `-wFreq:WavFile` to generate a WAV file at a sampling frequancy other than the default.
-The audio wave file format will be 8-bit PCM mono.
+The output can either be the default sound output device, or a .WAV file. Specify `-wWavFile` to write the audio stream to WavFile. Specify `-wFreq:WavFile` to generate a WAV file at a sampling frequency other than the default. The audio wave file format will be 8-bit PCM mono.
 
-The XTAL frequency can also be specified via the option `-xXtal`, where 1000000 <= Xtal <= 5000000. The default
-value for Xtal is 3120000 (3.12 MHz).
+The XTAL frequency can also be specified via the option `-xXtal`, where 1000000 <= Xtal <= 5000000. The default value for Xtal is 3120000 (3.12 MHz).
 
-The audio sampling frequency is given by the expression `Freq = Xtal / 312`. So, for the default Xtal frequency of 3.12 MHz,
-the audio sampling frequency will be 10 kHz. This audio sampling frequency will be the default frequency for the .WAV
-file if no other value is specified via the `-w` option.
+The audio sampling frequency is given by the expression `Freq = Xtal / 312`. So, for the default Xtal frequency of 3.12 MHz, the audio sampling frequency will be 10 kHz. This audio sampling frequency will be the default frequency for the .WAV file if no other value is specified via the `-w` option.
 
 Some echo/verbose/debugging flags are provided:
 - `-e` to echo the generated allophones, pauses or words;
@@ -127,24 +119,23 @@ sp0256 [-m{AL2|012}] [-e] [-v] [-xClockFreq] [ -t | -b | -a ] [ -i{inFile|-} ] [
 ````
 
 
-## CTS256A-AL2.EXE
+CTS256A-AL2.EXE
+---------------
 
 **CTS256A-AL2(tm) Emulator**
 
 **GI/Microchip CTS256A-AL2(tm) Code-To-Speech Speech Processor**
 
 
-This program accurately emulates the CTS256A-AL2 companion chip of the SP0256-AL2 speech processor,
-using the embedded original code-to-speech ROM image.
+This program accurately emulates the CTS256A-AL2 companion chip of the SP0256-AL2 speech processor, using the embedded original code-to-speech ROM image.
+
+The CTS256A-AL2 converts input text into allophone codes for speech synthesis. Its letter-to-sound approach is based on the Naval Research Laboratory paper "[Automatic Translation of English Text to Phonetics by Means of Letter-to-Sound Rules](https://apps.dtic.mil/sti/pdfs/ADA021929.pdf)" ([alternate copy](https://dtic.minsky.ai/index/ADA021929/pdf)). The paper describes 329 rules; the CTS256A-AL2 ROM contains a 432-rule set, transcribed in [RULES.TXT](RULES.TXT).
 
 
-The input can either be stdin, or a file, or the command line. Specify `-i-` to use stdin, `-iFilename` to use
-an input file, or put the text at the end of the command line, after the options.
+The input can either be stdin, or a file, or the command line. Specify `-i-` to use stdin, `-iFilename` to use an input file, or put the text at the end of the command line, after the options.
 
 
-The output is stdout. It can be piped to SP0256.exe in order to directly pronounce the allophones converted from
-the input text. The format can either be ASCII (the allophone or pause labels), or binary (6-bit addresses OR-ed
-with 0x40). Specify `-t` for ASCII text mode (the default), or `-b` for binary mode.
+The output is stdout. It can be piped to SP0256.exe in order to directly pronounce the allophones converted from the input text. The format can either be ASCII (the allophone or pause labels), or binary (6-bit addresses OR-ed with 0x40). Specify `-t` for ASCII text mode (the default), or `-b` for binary mode.
 
 
 Some echo/verbose/debugging flags are provided:
@@ -171,25 +162,27 @@ cts256a-al2 [-iFile] [-t] [-b] [-e] [-d] [-v] [-n] [text]
 ````
 
 If no `-ifile` and no `text` is specified on the command line, reads input from stdin.
-<br>
+
 Example: `echo Hello World. | CTS256A-AL2.exe -n | SP0256.exe -i-`
 
 
-## Useful links
+Useful links
+------------
 
 ### CTS256A-AL2
 
 Data Sheet: http://bitsavers.informatik.uni-stuttgart.de/components/gi/speech/General_Instrument_-_AN-0505D_-_CTS256A-AL2_Code-to-Speech_Chipset_-_10Dec1986.pdf
 
-Binary ROM image: https://github.com/palazzol/TMS7xxx_dumper/blob/main/software/dumps/cts256a.bin
-from the GitHub project: https://github.com/palazzol/TMS7xxx_dumper
+Binary ROM image: https://github.com/palazzol/TMS7xxx_dumper/blob/main/software/dumps/cts256a.bin from the GitHub project: https://github.com/palazzol/TMS7xxx_dumper
+
+Document from the Naval Research Laboratory "Automatic Translation of English Text to Phonetics by Means of Letter-to-Sound Rules": https://apps.dtic.mil/sti/pdfs/ADA021929.pdf ([Alternate link](https://dtic.minsky.ai/index/ADA021929/pdf))
+
 
 ### SP0256-AL2 ROM Image
 
 http://spatula-city.org/~im14u2c/sp0256-al2/
 
-This image has been byte-reversed. It should be de-reversed in order to
-incorporate this into ivoice.c in `ivoice.c` in project https://github.com/libretro/FreeIntv .
+This image has been byte-reversed. It should be de-reversed in order to incorporate this into ivoice.c in `ivoice.c` in project https://github.com/libretro/FreeIntv .
 
 
 ### Intellivoice Hardware Overview
@@ -220,7 +213,8 @@ Measured timings: https://www.cpcwiki.eu/index.php/SP0256_Measured_Timings
 
 
 
-## Next steps and ideas
+Next steps and ideas
+--------------------
 
 ### SP0256.EXE
 
@@ -237,16 +231,31 @@ Measured timings: https://www.cpcwiki.eu/index.php/SP0256_Measured_Timings
 
 
 
-## Copyright notice
+Copyright notice
+----------------
 
 Microchip, Inc. holds the copyrights to the SP0256-AL2 design and ROM Image, and to the CTS256A-AL2 ROM Image.
+
 Microchip retains the intellectual property rights to the algorithms and data the emulated devices SP0256 and CTS256A-AL2 contain.
 
 
 
-## Credits
+Credits
+-------
 
 Joe Zbiciak, author of the Intellivoice emulator in C language, which this SP0256 emulator is based on.
 
-Frank Palazzolo, who designed an extractor to dump the masked ROMs of TMS7000-based devices, and published
-the ROM binary image `cts256a.bin`.
+Frank Palazzolo, who designed an extractor to dump the masked ROMs of TMS7000-based devices, and published the ROM binary image `cts256a.bin`.
+
+
+
+Related projects
+----------------
+
+- [CTS256A-AL2](https://github.com/GmEsoft/CTS256A-AL2): Commented disassembly of the GI(tm) CTS256A-AL2(tm) Code-To-Speech Processor
+
+- [TRS80_CTS256A-AL2](https://github.com/GmEsoft/TRS80_CTS256A-AL2): G.I. CTS256A-AL2 reimplementation on Z-80
+
+- [TRS80_SAY](https://github.com/GmEsoft/TRS80_SAY): S.A.M.-based text-to-speech voice synthesizer, for TRS-80 CP/M and LS-DOS 6 and Orchestra-90
+
+- [ASM7000](http://www.github.com/GmEsoft/ASM7000): Tiny assembler for TMS-7000 / PIC-7000 series
