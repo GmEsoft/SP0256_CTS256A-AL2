@@ -1233,6 +1233,7 @@ void ivoice_wr(uint32_t addr, uint32_t data)
 
             memset(&ivoice->filt, 0, sizeof(ivoice->filt));
             ivoice->halted   = 1;
+            ivoice->sustain  = 1;
             ivoice->filt.rpt = -1;
             ivoice->filt.rng = 1;
             ivoice->lrq      = 0x8000;
@@ -1305,6 +1306,7 @@ int ivoice_init
     /*  Set up the microsequencer's initial state.                          */
     /* -------------------------------------------------------------------- */
     ivoice->halted   = 1;
+    ivoice->sustain  = 1;
     ivoice->filt.rpt = -1;
     ivoice->lrq      = 0x8000;
     ivoice->page     = 0x1000 << 3;
@@ -1322,6 +1324,11 @@ void sp0256_setFifoEnabled( int enabled )
 uint32_t sp0256_getStatus()
 {
     return ivoice_rd( 0 );
+}
+
+void sp0256_set_sustain( int on )
+{
+	intellivoice.sustain = on ? 1 : 0;
 }
 
 int sp0256_halted()
@@ -1352,7 +1359,14 @@ int sp0256_getNextSample()
 	if (ivoice->filt.rpt <= 0 && ivoice->filt.cnt <= 0)
         sp0256_micro(ivoice);
 
-	if  (	ivoice->halted
+	/*  A halted SP0256 does not go silent on real hardware: the sequencer
+	    stops fetching, but the filter goes on being clocked with the last
+	    frame's coefficients, so the part holds the sound it was making until
+	    the next ALD. See issue #5. filt.rpt is parked at 1 by the HALT branch
+	    of sp0256_micro(), so simply not forcing zero here reproduces it.
+	    `sustain` defaults to 1; sp0256_set_sustain(0) restores the previous
+	    behaviour exactly.  */
+	if  (	( ivoice->halted && !ivoice->sustain )
 		||	( ivoice->silent && ivoice->filt.rpt <= 0 && ivoice->filt.cnt <= 0 )
 		)
 	{

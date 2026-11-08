@@ -58,6 +58,7 @@ typedef struct ivoice_t
     int         stack;      /* Microcontroller's PC stack.                  */
     int         fifo_sel;   /* True when executing from FIFO.               */
     int         halted;     /* True when CPU is halted.                     */
+    int         sustain;    /* Keep filtering once halted (real behaviour). */
     uint32_t    mode;       /* Mode register.                               */
     uint32_t    page;       /* Page set by SETPAGE                          */
 
@@ -95,6 +96,11 @@ int ivoice_init
 void sp0256_setFifoEnabled( int enabled );
 uint32_t sp0256_getStatus();
 int sp0256_halted();
+
+/* Keep the filter running once the sequencer halts, which is what the real
+   part does -- see the note in sp0256_getNextSample() and issue #5. On by
+   default; sp0256_set_sustain(0) restores the previous behaviour. */
+void sp0256_set_sustain( int on );
 void sp0256_sendCommand( uint32_t cmd );
 /*
 int sp0256_isNextSample();
